@@ -29,7 +29,7 @@ var books []Book
 // Get all books
 func getBooks(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	log.Fatal(json.NewEncoder(w).Encode(books))
+	_ = json.NewEncoder(w).Encode(books)
 }
 
 func getBook(w http.ResponseWriter, r *http.Request) {
@@ -79,6 +79,7 @@ func main() {
 	r.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
 	r.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
 
+	log.Println("Server started ...")
 	// Starting the server
 	log.Fatal(http.ListenAndServe(":8000", r))
 }
