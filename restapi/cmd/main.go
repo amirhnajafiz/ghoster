@@ -10,16 +10,11 @@ import (
 
 	A "restapi/restapi/internal/models/author"
 	B "restapi/restapi/internal/models/book"
+	"restapi/restapi/internal/routes/index"
 )
 
 // Init books var as a slice Book struct
 var books []B.Book
-
-// Get all books
-func getBooks(w http.ResponseWriter, _ *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	_ = json.NewEncoder(w).Encode(books)
-}
 
 // Get a book from books struct
 func getBook(w http.ResponseWriter, r *http.Request) {
@@ -111,7 +106,7 @@ func main() {
 	})
 
 	// Route handlers / Endpoints
-	r.HandleFunc("/api/books", getBooks).Methods("GET")
+	r.HandleFunc("/api/books", index.GetBooks).Methods("GET")
 	r.HandleFunc("/api/books/{id}", getBook).Methods("GET")
 	r.HandleFunc("/api/books", createBook).Methods("POST")
 	r.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
