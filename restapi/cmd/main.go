@@ -10,30 +10,11 @@ import (
 	"restapi/restapi/internal/routes/index"
 	"restapi/restapi/internal/routes/show"
 	"restapi/restapi/internal/routes/store"
+	"restapi/restapi/internal/routes/update"
 )
 
 // Init books var as a slice Book struct
 var books []B.Book
-
-func updateBook(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-
-	for index, item := range books {
-		if item.ID == params["id"] {
-			books = append(books[:index], books[index+1:]...)
-			var book B.Book
-			_ = json.NewDecoder(r.Body).Decode(&book)
-			book.ID = params["id"]
-			books = append(books, book)
-
-			_ = json.NewEncoder(w).Encode(book)
-			return
-		}
-	}
-
-	_ = json.NewEncoder(w).Encode(books)
-}
 
 // Removing a book
 func deleteBook(w http.ResponseWriter, r *http.Request) {
@@ -78,7 +59,7 @@ func main() {
 	r.HandleFunc("/api/books", index.GetBooks).Methods("GET")
 	r.HandleFunc("/api/books/{id}", show.GetBook).Methods("GET")
 	r.HandleFunc("/api/books", store.CreateBook).Methods("POST")
-	r.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
+	r.HandleFunc("/api/books/{id}", update.UpdateBook).Methods("PUT")
 	r.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
 
 	log.Println("Server started ...")
