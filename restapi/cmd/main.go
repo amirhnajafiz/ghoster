@@ -4,31 +4,16 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"log"
-	"math/rand"
 	"net/http"
-	"strconv"
-
 	A "restapi/restapi/internal/models/author"
 	B "restapi/restapi/internal/models/book"
 	"restapi/restapi/internal/routes/index"
 	"restapi/restapi/internal/routes/show"
+	"restapi/restapi/internal/routes/store"
 )
 
 // Init books var as a slice Book struct
 var books []B.Book
-
-// Create a New book
-func createBook(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
-	var book B.Book
-	_ = json.NewDecoder(r.Body).Decode(&book)
-
-	book.ID = strconv.Itoa(rand.Intn(10000000000)) // Mock id (not safe)
-	books = append(books, book)
-
-	_ = json.NewEncoder(w).Encode(book)
-}
 
 func updateBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -92,7 +77,7 @@ func main() {
 	// Route handlers / Endpoints
 	r.HandleFunc("/api/books", index.GetBooks).Methods("GET")
 	r.HandleFunc("/api/books/{id}", show.GetBook).Methods("GET")
-	r.HandleFunc("/api/books", createBook).Methods("POST")
+	r.HandleFunc("/api/books", store.CreateBook).Methods("POST")
 	r.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
 	r.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
 
