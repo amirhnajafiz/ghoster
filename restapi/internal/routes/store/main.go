@@ -4,20 +4,21 @@ import (
 	"encoding/json"
 	"math/rand"
 	"net/http"
-	S "restapi/restapi/config/server"
-	B "restapi/restapi/internal/models/book"
 	"strconv"
+
+	"restapi/restapi/config/server"
+	"restapi/restapi/internal/models/book"
 )
 
 // CreateBook : Create a New book
 func CreateBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	var book B.Book
-	_ = json.NewDecoder(r.Body).Decode(&book)
+	var tempBook book.Book
+	_ = json.NewDecoder(r.Body).Decode(&tempBook)
 
-	book.ID = strconv.Itoa(rand.Intn(10000000000)) // Mock id (not safe)
-	S.Books = append(S.Books, book)
+	tempBook.ID = strconv.Itoa(rand.Intn(10000000000)) // Mock id (not safe)
+	server.Books = append(server.Books, tempBook)
 
-	_ = json.NewEncoder(w).Encode(book)
+	_ = json.NewEncoder(w).Encode(tempBook)
 }

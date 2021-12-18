@@ -4,10 +4,10 @@ import (
 	"github.com/gorilla/mux"
 	"net/http"
 
-	B "restapi/restapi/internal/models/book"
+	"restapi/restapi/internal/models/book"
 )
 
-var Books []B.Book
+var Books []book.Book
 
 // GetServer : returns the server of the application
 func GetServer(r *mux.Router) *http.Server {
