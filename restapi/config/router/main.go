@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/gorilla/mux"
+
 	"restapi/restapi/internal/routes/destroy"
 	"restapi/restapi/internal/routes/index"
 	"restapi/restapi/internal/routes/show"

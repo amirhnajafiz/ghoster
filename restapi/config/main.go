@@ -1,3 +1,10 @@
+// Package config
+// 	This package creates the routers and the handlers
+//  of the project.
+//	After that is mocks the initialized data.
+//  Finally, it will create a server and returns it.
+//
+///**
 package config
 
 import (
@@ -8,6 +15,7 @@ import (
 	"restapi/restapi/config/server"
 )
 
+// Config : sets up the server, router and database.
 func Config() *http.Server {
 	r := router.GetRouter()
 	server.Books = database.Mock()
