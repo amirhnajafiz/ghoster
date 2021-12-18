@@ -3,9 +3,10 @@ package main
 import (
 	_ "encoding/json"
 	"github.com/gorilla/mux"
+	"log"
 	_ "log"
 	_ "math/rand"
-	_ "net/http"
+	"net/http"
 	_ "strconv"
 )
 
@@ -19,4 +20,7 @@ func main() {
 	r.HandleFunc("/api/books", createBook).Methods("POST")
 	r.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
 	r.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
+
+	// Starting the server
+	log.Fatal(http.ListenAndServe(":8000", r))
 }
