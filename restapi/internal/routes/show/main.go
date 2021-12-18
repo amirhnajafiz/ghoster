@@ -4,9 +4,8 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"net/http"
-
-	"restapi/restapi/config/server"
-	"restapi/restapi/internal/models/book"
+	"restapi/restapi/internal/database/models/book"
+	"strconv"
 )
 
 // GetBook : Get a book from books struct
@@ -14,14 +13,8 @@ func GetBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	params := mux.Vars(r) /// Get params
+	id, _ := strconv.Atoi(params["id"])
+	tempBook := book.Show(id)
 
-	// Loop in books and file with id
-	for _, item := range server.Books {
-		if item.ID == params["id"] {
-			_ = json.NewEncoder(w).Encode(item)
-			return
-		}
-	}
-
-	_ = json.NewEncoder(w).Encode(&book.Book{})
+	_ = json.NewEncoder(w).Encode(tempBook)
 }
