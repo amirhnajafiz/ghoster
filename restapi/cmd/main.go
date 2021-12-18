@@ -1,12 +1,13 @@
 package main
 
 import (
-	"encoding/json"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+
 	A "restapi/restapi/internal/models/author"
 	B "restapi/restapi/internal/models/book"
+	"restapi/restapi/internal/routes/destroy"
 	"restapi/restapi/internal/routes/index"
 	"restapi/restapi/internal/routes/show"
 	"restapi/restapi/internal/routes/store"
@@ -15,21 +16,6 @@ import (
 
 // Init books var as a slice Book struct
 var books []B.Book
-
-// Removing a book
-func deleteBook(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-
-	for index, item := range books {
-		if item.ID == params["id"] {
-			books = append(books[:index], books[index+1:]...)
-			break
-		}
-	}
-
-	_ = json.NewEncoder(w).Encode(books)
-}
 
 func main() {
 	// Init router
@@ -60,7 +46,7 @@ func main() {
 	r.HandleFunc("/api/books/{id}", show.GetBook).Methods("GET")
 	r.HandleFunc("/api/books", store.CreateBook).Methods("POST")
 	r.HandleFunc("/api/books/{id}", update.UpdateBook).Methods("PUT")
-	r.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
+	r.HandleFunc("/api/books/{id}", destroy.DeleteBook).Methods("DELETE")
 
 	log.Println("Server started ...")
 	// Starting the server
