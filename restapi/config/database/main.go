@@ -3,6 +3,7 @@ package database
 import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"restapi/restapi/internal/database/migrations"
 )
 
 var DB *gorm.DB
@@ -15,6 +16,9 @@ func Connect() {
 	if err != nil {
 		panic(err.Error())
 	}
+
+	// Migrating the database
+	migrations.Migrate(db)
 
 	DB = db
 }
