@@ -4,6 +4,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"restapi/restapi/internal/database/migrations"
+	"restapi/restapi/internal/database/seeder"
 )
 
 var DB *gorm.DB
@@ -19,6 +20,7 @@ func Connect() {
 
 	// Migrating the database
 	migrations.Migrate(db)
+	seeder.Seed(db)
 
 	DB = db
 }
