@@ -7,24 +7,13 @@ import (
 	"math/rand"
 	"net/http"
 	"strconv"
+
+	A "restapi/restapi/internal/models/author"
+	B "restapi/restapi/internal/models/book"
 )
 
-// Book struct (Model)
-type Book struct {
-	ID     string  `json:"id"`
-	Isbn   string  `json:"isbn"`
-	Title  string  `json:"title"`
-	Author *Author `json:"author"`
-}
-
-// Author struct
-type Author struct {
-	Firstname string `json:"firstname"`
-	Lastname  string `json:"lastname"`
-}
-
 // Init books var as a slice Book struct
-var books []Book
+var books []B.Book
 
 // Get all books
 func getBooks(w http.ResponseWriter, _ *http.Request) {
@@ -46,14 +35,14 @@ func getBook(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	_ = json.NewEncoder(w).Encode(&Book{})
+	_ = json.NewEncoder(w).Encode(&B.Book{})
 }
 
 // Create a New book
 func createBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	var book Book
+	var book B.Book
 	_ = json.NewDecoder(r.Body).Decode(&book)
 
 	book.ID = strconv.Itoa(rand.Intn(10000000000)) // Mock id (not safe)
@@ -69,7 +58,7 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 	for index, item := range books {
 		if item.ID == params["id"] {
 			books = append(books[:index], books[index+1:]...)
-			var book Book
+			var book B.Book
 			_ = json.NewDecoder(r.Body).Decode(&book)
 			book.ID = params["id"]
 			books = append(books, book)
@@ -102,20 +91,20 @@ func main() {
 	r := mux.NewRouter()
 
 	// Mock data
-	books = append(books, Book{
+	books = append(books, B.Book{
 		ID:    "1",
 		Isbn:  "44502",
 		Title: "Book One",
-		Author: &Author{
+		Author: &A.Author{
 			Firstname: "John",
 			Lastname:  "Doe",
 		},
 	})
-	books = append(books, Book{
+	books = append(books, B.Book{
 		ID:    "2",
 		Isbn:  "88727",
 		Title: "Book Two",
-		Author: &Author{
+		Author: &A.Author{
 			Firstname: "Steve",
 			Lastname:  "Smith",
 		},
