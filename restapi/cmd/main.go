@@ -2,11 +2,11 @@ package main
 
 import (
 	"log"
-	"restapi/restapi/config/server"
+	"restapi/restapi/config"
 )
 
 func main() {
-	app := server.GetServer()
+	app := config.Config()
 	log.Println("Server started ...")
 	// Starting the server
 	log.Fatal(app.ListenAndServe())
