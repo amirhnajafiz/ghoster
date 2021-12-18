@@ -9,6 +9,7 @@ package config
 
 import (
 	"net/http"
+	"restapi/restapi/config/database"
 	"restapi/restapi/config/router"
 	"restapi/restapi/config/server"
 )
@@ -16,6 +17,7 @@ import (
 // Config : sets up the server, router and database.
 func Config() *http.Server {
 	r := router.GetRouter()
+	database.Connect()
 	app := server.GetServer(r)
 	return app
 }
