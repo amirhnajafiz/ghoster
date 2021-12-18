@@ -9,10 +9,6 @@ package config
 
 import (
 	"net/http"
-	"restapi/restapi/internal/seeder"
-
-	"restapi/restapi/config/database"
-	"restapi/restapi/config/db"
 	"restapi/restapi/config/router"
 	"restapi/restapi/config/server"
 )
@@ -20,9 +16,6 @@ import (
 // Config : sets up the server, router and database.
 func Config() *http.Server {
 	r := router.GetRouter()
-	server.Books = database.Mock()
-	db.Connect()
-	seeder.Seed()
 	app := server.GetServer(r)
 	return app
 }
