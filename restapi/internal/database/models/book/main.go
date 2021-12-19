@@ -30,6 +30,12 @@ func Add(tempBook Book) Book {
 	return tempBook
 }
 
+func Put(tempBook Book, ID int) Book {
+	book := Get(ID)
+	database.DB.Model(&book).Updates(tempBook)
+	return book
+}
+
 func Del(ID int) {
 	database.DB.Delete(&Book{}, ID)
 }
