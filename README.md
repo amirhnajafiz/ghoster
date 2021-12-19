@@ -39,7 +39,11 @@ Result should be something like this:
 ## Features
 - use mux package to create routes
 - rest-api implementation
+- mysql database
+- golang orm
 
 ## Tools
 - go (version 1.17)
 - mux (version 8) 
+- gorm (version 22)
+- mysql (2)

@@ -5,6 +5,7 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"restapi/restapi/internal/database/migrations"
+	"restapi/restapi/internal/database/seeder"
 )
 
 var DB *gorm.DB
@@ -23,7 +24,7 @@ func Connect(migrate bool) {
 	// Migrating the database and seeding the data into database
 	if migrate {
 		migrations.Migrate(db)
-		// seeder.Seed(db)
+		seeder.Seed(db)
 	}
 
 	DB = db
