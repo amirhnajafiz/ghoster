@@ -3,7 +3,6 @@ package book
 import (
 	"gorm.io/gorm"
 	"restapi/restapi/config/database"
-	"restapi/restapi/internal/models/book"
 )
 
 // Book struct (Model)
@@ -22,7 +21,12 @@ func All() []Book {
 
 func Get(ID int) Book {
 	tempBook := Book{}
-	database.DB.First(book.Book{}, ID).Scan(&tempBook)
+	database.DB.First(Book{}, ID).Scan(&tempBook)
+	return tempBook
+}
+
+func Add(tempBook Book) Book {
+	database.DB.Create(&tempBook)
 	return tempBook
 }
 
