@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"net/http"
-
-	"restapi/restapi/config/server"
+	"restapi/restapi/internal/database/models/book"
+	"strconv"
 )
 
 // DeleteBook : Removing a book
@@ -13,12 +13,8 @@ func DeleteBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 
-	for index, item := range server.Books {
-		if item.ID == params["id"] {
-			server.Books = append(server.Books[:index], server.Books[index+1:]...)
-			break
-		}
-	}
+	ID, _ := strconv.Atoi(params["id"])
+	book.Del(ID)
 
-	_ = json.NewEncoder(w).Encode(server.Books)
+	_ = json.NewEncoder(w).Encode(book.All())
 }

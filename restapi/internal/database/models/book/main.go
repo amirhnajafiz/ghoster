@@ -25,3 +25,7 @@ func Get(ID int) Book {
 	database.DB.First(book.Book{}, ID).Scan(&tempBook)
 	return tempBook
 }
+
+func Del(ID int) {
+	database.DB.Delete(&Book{}, ID)
+}
