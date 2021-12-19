@@ -3,6 +3,7 @@ package database
 import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"log"
 	"restapi/restapi/internal/database/migrations"
 	"restapi/restapi/internal/database/seeder"
 )
@@ -17,6 +18,8 @@ func Connect(migrate bool) {
 	if err != nil {
 		panic(err.Error())
 	}
+
+	log.Println("Database connected on 127.0.0.1:3306 ...")
 
 	// Migrating the database and seeding the data into database
 	if migrate {
