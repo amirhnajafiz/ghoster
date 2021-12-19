@@ -5,6 +5,7 @@ import (
 	"github.com/gorilla/mux"
 	"net/http"
 	"restapi/restapi/internal/database/models/book"
+	"restapi/restapi/internal/database/models/book/methods"
 	"strconv"
 )
 
@@ -17,5 +18,5 @@ func UpdateBook(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewDecoder(r.Body).Decode(&tempBook)
 	ID, _ := strconv.Atoi(params["id"])
 
-	_ = json.NewEncoder(w).Encode(book.Put(tempBook, ID))
+	_ = json.NewEncoder(w).Encode(methods.Put(tempBook, ID))
 }

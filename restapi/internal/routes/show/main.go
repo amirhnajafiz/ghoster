@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"net/http"
-	"restapi/restapi/internal/database/models/book"
+	"restapi/restapi/internal/database/models/book/methods"
 	"strconv"
 )
 
@@ -14,7 +14,7 @@ func GetBook(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r) /// Get params
 	id, _ := strconv.Atoi(params["id"])
-	tempBook := book.Get(id)
+	tempBook := methods.Get(id)
 
 	_ = json.NewEncoder(w).Encode(tempBook)
 }

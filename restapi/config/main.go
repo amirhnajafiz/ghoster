@@ -17,7 +17,7 @@ import (
 // Config : sets up the server, router and database.
 func Config() *http.Server {
 	r := router.GetRouter()
-	database.Connect(false)
+	database.Connect(true)
 	app := server.GetServer(r)
 	return app
 }
