@@ -14,7 +14,13 @@ type Book struct {
 	Author string
 }
 
-func Show(ID int) Book {
+func All() []Book {
+	var books []Book
+	_ = database.DB.Find(&books)
+	return books
+}
+
+func Get(ID int) Book {
 	tempBook := Book{}
 	database.DB.First(book.Book{}, ID).Scan(&tempBook)
 	return tempBook

@@ -10,7 +10,7 @@ import (
 var DB *gorm.DB
 
 // Connect : creates a connection to our database
-func Connect() {
+func Connect(migrate bool) {
 	dsn := "root:Amir2222@tcp(127.0.0.1:3306)/books"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
@@ -18,9 +18,11 @@ func Connect() {
 		panic(err.Error())
 	}
 
-	// Migrating the database
-	migrations.Migrate(db)
-	seeder.Seed(db)
+	// Migrating the database and seeding the data into database
+	if migrate {
+		migrations.Migrate(db)
+		seeder.Seed(db)
+	}
 
 	DB = db
 }

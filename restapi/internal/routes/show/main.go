@@ -14,7 +14,7 @@ func GetBook(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r) /// Get params
 	id, _ := strconv.Atoi(params["id"])
-	tempBook := book.Show(id)
+	tempBook := book.Get(id)
 
 	_ = json.NewEncoder(w).Encode(tempBook)
 }
