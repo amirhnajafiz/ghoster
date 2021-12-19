@@ -2,7 +2,7 @@ package author
 
 // Author struct
 type Author struct {
-	ID        int
-	Firstname string `gorm:"primaryKey"`
+	ID        int `gorm:"primaryKey"`
+	Firstname string
 	Lastname  string
 }
