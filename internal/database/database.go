@@ -3,7 +3,6 @@ package database
 import (
 	"log"
 
-	"github.com/amirhnajafiz/restful-go/internal/database/migrations"
 	"github.com/amirhnajafiz/restful-go/internal/models"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -24,7 +23,7 @@ func Connect(migrate bool) {
 
 	// Migrating the database and seeding the data into database
 	if migrate {
-		migrations.Migrate(db)
+		models.Migrate(db)
 		models.Seed(db)
 	}
 
