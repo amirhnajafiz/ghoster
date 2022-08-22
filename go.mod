@@ -1,4 +1,4 @@
-module restapi
+module github.com/amirhnajafiz/restful-go
 
 go 1.17
 

@@ -1,11 +1,12 @@
 package database
 
 import (
+	"log"
+
+	"github.com/amirhnajafiz/restful-go/internal/database/migrations"
+	"github.com/amirhnajafiz/restful-go/internal/database/seeder"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"log"
-	"restapi/restapi/internal/database/migrations"
-	"restapi/restapi/internal/database/seeder"
 )
 
 var DB *gorm.DB
