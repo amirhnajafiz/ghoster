@@ -1,4 +1,4 @@
-package author
+package models
 
 // Author struct
 type Author struct {
