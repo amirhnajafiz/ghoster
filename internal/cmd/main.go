@@ -10,7 +10,7 @@ import (
 
 // GetServer : returns the server of the application
 func getServer() *http.Server {
-	db := database.Connect(false)
+	db := database.Connect(true)
 	r := router.GetRouter(db)
 
 	server := http.Server{
