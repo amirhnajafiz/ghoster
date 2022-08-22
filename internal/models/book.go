@@ -1,6 +1,6 @@
 package models
 
-import "github.com/amirhnajafiz/restful-go/internal/database"
+import "gorm.io/gorm"
 
 // Book struct (Model)
 type Book struct {
@@ -11,36 +11,36 @@ type Book struct {
 	Author   Author `gorm:"references:ID"`
 }
 
-func GetAllBooks() []Book {
+func GetAllBooks(db *gorm.DB) []Book {
 	var books []Book
 
-	_ = database.DB.Find(&books)
+	_ = db.Find(&books)
 
 	return books
 }
 
-func GetBook(ID int) Book {
+func GetBook(ID int, db *gorm.DB) Book {
 	var tempBook Book
 
-	database.DB.First(&tempBook, ID)
+	db.First(&tempBook, ID)
 
 	return tempBook
 }
 
-func AddBook(tempBook Book) Book {
-	database.DB.Create(&tempBook)
+func AddBook(tempBook Book, db *gorm.DB) Book {
+	db.Create(&tempBook)
 
 	return tempBook
 }
 
-func PutBook(tempBook Book, ID int) Book {
-	temp := GetBook(ID)
+func PutBook(tempBook Book, ID int, db *gorm.DB) Book {
+	temp := GetBook(ID, db)
 
-	database.DB.Model(&temp).Updates(tempBook)
+	db.Model(&temp).Updates(tempBook)
 
 	return temp
 }
 
-func DelBook(ID int) {
-	database.DB.Delete(&Book{}, ID)
+func DelBook(ID int, db *gorm.DB) {
+	db.Delete(&Book{}, ID)
 }
