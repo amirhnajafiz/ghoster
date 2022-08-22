@@ -8,10 +8,8 @@ import (
 	"gorm.io/gorm"
 )
 
-var DB *gorm.DB
-
 // Connect : creates a connection to our database
-func Connect(migrate bool) {
+func Connect(migrate bool) *gorm.DB {
 	dsn := "root:Amir2222@tcp(127.0.0.1:3306)/books"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
@@ -27,5 +25,5 @@ func Connect(migrate bool) {
 		models.Seed(db)
 	}
 
-	DB = db
+	return db
 }

@@ -4,12 +4,15 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/amirhnajafiz/restful-go/internal/config"
-	"github.com/gorilla/mux"
+	"github.com/amirhnajafiz/restful-go/internal/database"
+	"github.com/amirhnajafiz/restful-go/internal/http/router"
 )
 
 // GetServer : returns the server of the application
-func getServer(r *mux.Router) *http.Server {
+func getServer() *http.Server {
+	db := database.Connect(false)
+	r := router.GetRouter(db)
+
 	server := http.Server{
 		Addr:    ":8000",
 		Handler: r,
@@ -19,7 +22,7 @@ func getServer(r *mux.Router) *http.Server {
 }
 
 func main() {
-	app := config.Config() // Getting the application server from config package
+	app := getServer()
 
 	// Starting the server
 	log.Println("Server started ...")
