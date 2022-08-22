@@ -9,14 +9,15 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// GetBooks : Get all books
-func GetBooks(w http.ResponseWriter, _ *http.Request) {
+// getBooks : Get all books
+func getBooks(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
 	_ = json.NewEncoder(w).Encode(models.GetAllBooks())
 }
 
-// GetBook : Get a book from books struct
-func GetBook(w http.ResponseWriter, r *http.Request) {
+// getBook : Get a book from books struct
+func getBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	params := mux.Vars(r) /// Get params
@@ -26,34 +27,39 @@ func GetBook(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(tempBook)
 }
 
-// CreateBook : Create a New book
-func CreateBook(w http.ResponseWriter, r *http.Request) {
+// createBook : Create a New book
+func createBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var tempBook models.Book
+
 	_ = json.NewDecoder(r.Body).Decode(&tempBook)
 
 	_ = json.NewEncoder(w).Encode(models.AddBook(tempBook))
 }
 
-// UpdateBook : updates a book in our slice
-func UpdateBook(w http.ResponseWriter, r *http.Request) {
+// updateBook : updates a book in our slice
+func updateBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
 	params := mux.Vars(r)
 
 	tempBook := models.Book{}
+
 	_ = json.NewDecoder(r.Body).Decode(&tempBook)
 	ID, _ := strconv.Atoi(params["id"])
 
 	_ = json.NewEncoder(w).Encode(models.PutBook(tempBook, ID))
 }
 
-// DeleteBook : Removing a book
-func DeleteBook(w http.ResponseWriter, r *http.Request) {
+// deleteBook : Removing a book
+func deleteBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+
 	params := mux.Vars(r)
 
 	ID, _ := strconv.Atoi(params["id"])
+
 	models.DelBook(ID)
 
 	_ = json.NewEncoder(w).Encode(models.GetAllBooks())
@@ -65,11 +71,11 @@ func GetRouter() *mux.Router {
 	r := mux.NewRouter()
 
 	// Route handlers / Endpoints
-	r.HandleFunc("/api/books", GetBooks).Methods("GET")
-	r.HandleFunc("/api/books/{id}", GetBook).Methods("GET")
-	r.HandleFunc("/api/books", CreateBook).Methods("POST")
-	r.HandleFunc("/api/books/{id}", UpdateBook).Methods("PUT")
-	r.HandleFunc("/api/books/{id}", DeleteBook).Methods("DELETE")
+	r.HandleFunc("/api/books", getBooks).Methods("GET")
+	r.HandleFunc("/api/books/{id}", getBook).Methods("GET")
+	r.HandleFunc("/api/books", createBook).Methods("POST")
+	r.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
+	r.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
 
 	return r
 }
