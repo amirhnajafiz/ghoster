@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">
-Go REST
+Restful Go
 </h1>
 
 Create a restful api with Golang for a simple Book website. The main idea behind this project was to gain some knowledge about implementing a **rest-api in Golang** and working with **gorm** and MySQL database.
