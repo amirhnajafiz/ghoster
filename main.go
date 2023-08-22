@@ -26,5 +26,5 @@ func main() {
 
 	// Starting the server
 	log.Println("Server started ...")
-	log.Fatal(app.ListenAndServe())
+	log.Fatal(app.ListenAndServeTLS("server.pem", "server.key"))
 }
