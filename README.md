@@ -21,7 +21,7 @@ There are _database_ and _models_ packages for database connection and our servi
 ## Run project
 Clone the project and use the following command to set up the server: (make sure to have a MySQL database running)
 ```shell
-go run internal/cmd/main.go
+go run main.go
 ```
 
 Result should be something like this:
