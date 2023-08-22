@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/amirhnajafiz/restful-go/internal/models"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
