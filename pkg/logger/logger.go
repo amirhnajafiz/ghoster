@@ -14,9 +14,9 @@ type Logger interface {
 	Trace(label string) Logger
 }
 
-func New(level int) Logger {
+func New(level Level) Logger {
 	return &logger{
-		level: Level(level),
+		level: level,
 	}
 }
 
@@ -48,7 +48,7 @@ func (l logger) Info(err error, params ...interface{}) {
 		labels = append(labels, fmt.Sprintf("{ %s: %s }", params[i], params[i+1]))
 	}
 
-	log.Println(fmt.Sprintf("%s [ERROR] %s: %v, [%s]", l.timer(), l.tracer, err, strings.Join(labels, ",")))
+	log.Println(fmt.Sprintf("%s [INFO] %s: %v, [%s]", l.timer(), l.tracer, err, strings.Join(labels, ",")))
 }
 
 func (l logger) Debug(err error, params ...interface{}) {
@@ -61,7 +61,7 @@ func (l logger) Debug(err error, params ...interface{}) {
 		labels = append(labels, fmt.Sprintf("{ %s: %s }", params[i], params[i+1]))
 	}
 
-	log.Println(fmt.Sprintf("%s [ERROR] %s: %v, [%s]", l.timer(), l.tracer, err, strings.Join(labels, ",")))
+	log.Println(fmt.Sprintf("%s [DEBUG] %s: %v, [%s]", l.timer(), l.tracer, err, strings.Join(labels, ",")))
 }
 
 func (l logger) Trace(label string) Logger {
