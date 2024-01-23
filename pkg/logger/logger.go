@@ -1,5 +1,11 @@
 package logger
 
+import (
+	"fmt"
+	"log"
+	"time"
+)
+
 type Logger interface {
 	Error(err error, params ...interface{})
 	Info(err error, params ...interface{})
@@ -16,15 +22,15 @@ type logger struct {
 }
 
 func (l logger) Error(err error, params ...interface{}) {
-
+	log.Println(fmt.Sprintf("%s [ERROR] %s: %v", time.Now(), l.tracer, err))
 }
 
 func (l logger) Info(err error, params ...interface{}) {
-
+	log.Println(fmt.Sprintf("%s [INFO] %s: %v", time.Now(), l.tracer, err))
 }
 
 func (l logger) Debug(err error, params ...interface{}) {
-
+	log.Println(fmt.Sprintf("%s [DEBUG] %s: %v", time.Now(), l.tracer, err))
 }
 
 func (l logger) Trace(label string) Logger {
