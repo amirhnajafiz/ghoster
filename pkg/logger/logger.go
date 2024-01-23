@@ -22,15 +22,15 @@ type logger struct {
 }
 
 func (l logger) Error(err error, params ...interface{}) {
-	log.Println(fmt.Sprintf("%s [ERROR] %s: %v", time.Now(), l.tracer, err))
+	log.Println(fmt.Sprintf("%s [ERROR] %s: %v", l.timer(), l.tracer, err))
 }
 
 func (l logger) Info(err error, params ...interface{}) {
-	log.Println(fmt.Sprintf("%s [INFO] %s: %v", time.Now(), l.tracer, err))
+	log.Println(fmt.Sprintf("%s [INFO] %s: %v", l.timer(), l.tracer, err))
 }
 
 func (l logger) Debug(err error, params ...interface{}) {
-	log.Println(fmt.Sprintf("%s [DEBUG] %s: %v", time.Now(), l.tracer, err))
+	log.Println(fmt.Sprintf("%s [DEBUG] %s: %v", l.timer(), l.tracer, err))
 }
 
 func (l logger) Trace(label string) Logger {
@@ -41,4 +41,8 @@ func (l logger) Trace(label string) Logger {
 	}
 
 	return l
+}
+
+func (l logger) timer() string {
+	return time.Now().Format(time.DateTime)
 }
