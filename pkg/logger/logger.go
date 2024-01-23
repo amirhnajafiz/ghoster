@@ -3,6 +3,7 @@ package logger
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -22,15 +23,30 @@ type logger struct {
 }
 
 func (l logger) Error(err error, params ...interface{}) {
-	log.Println(fmt.Sprintf("%s [ERROR] %s: %v", l.timer(), l.tracer, err))
+	labels := make([]string, 0)
+	for i := 0; i < len(params); i += 2 {
+		labels = append(labels, fmt.Sprintf("{ %s: %s }", params[i], params[i+1]))
+	}
+
+	log.Println(fmt.Sprintf("%s [ERROR] %s: %v, [%s]", l.timer(), l.tracer, err, strings.Join(labels, ",")))
 }
 
 func (l logger) Info(err error, params ...interface{}) {
-	log.Println(fmt.Sprintf("%s [INFO] %s: %v", l.timer(), l.tracer, err))
+	labels := make([]string, 0)
+	for i := 0; i < len(params); i += 2 {
+		labels = append(labels, fmt.Sprintf("{ %s: %s }", params[i], params[i+1]))
+	}
+
+	log.Println(fmt.Sprintf("%s [ERROR] %s: %v, [%s]", l.timer(), l.tracer, err, strings.Join(labels, ",")))
 }
 
 func (l logger) Debug(err error, params ...interface{}) {
-	log.Println(fmt.Sprintf("%s [DEBUG] %s: %v", l.timer(), l.tracer, err))
+	labels := make([]string, 0)
+	for i := 0; i < len(params); i += 2 {
+		labels = append(labels, fmt.Sprintf("{ %s: %s }", params[i], params[i+1]))
+	}
+
+	log.Println(fmt.Sprintf("%s [ERROR] %s: %v, [%s]", l.timer(), l.tracer, err, strings.Join(labels, ",")))
 }
 
 func (l logger) Trace(label string) Logger {
