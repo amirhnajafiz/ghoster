@@ -1,3 +1,3 @@
-package mongodb
+package agent
 
 type Config struct{}

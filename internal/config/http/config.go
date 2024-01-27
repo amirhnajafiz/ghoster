@@ -1,3 +1,3 @@
-package mongodb
+package http
 
 type Config struct{}
