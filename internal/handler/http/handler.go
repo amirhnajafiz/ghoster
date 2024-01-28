@@ -53,3 +53,7 @@ func (h HTTP) Upload(ctx echo.Context) error {
 
 	return ctx.NoContent(http.StatusOK)
 }
+
+func (h HTTP) Use(ctx echo.Context) error {
+	return nil
+}
