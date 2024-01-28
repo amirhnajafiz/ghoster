@@ -1,3 +1,6 @@
 package mongodb
 
-type Config struct{}
+type Config struct {
+	Database string `koanf:"database"`
+	URI      string `koanf:"uri"`
+}
