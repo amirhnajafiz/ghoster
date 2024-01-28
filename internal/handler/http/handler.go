@@ -55,5 +55,9 @@ func (h HTTP) Upload(ctx echo.Context) error {
 }
 
 func (h HTTP) Use(ctx echo.Context) error {
+	uuid := ctx.Param("uuid")
+
+	log.Println(uuid)
+
 	return nil
 }
