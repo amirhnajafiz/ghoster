@@ -17,10 +17,8 @@ import (
 
 const baseDir = "./files/"
 
+// Upload documents into agent local storage.
 func (h HTTP) Upload(ctx echo.Context) error {
-	// create a new context
-	c := context.Background()
-
 	// get title and create uid for document
 	title := ctx.FormValue("title")
 	uid := uuid.New().String()
@@ -77,9 +75,14 @@ func (h HTTP) Upload(ctx echo.Context) error {
 		StoragePath: path,
 	}
 
+	// create a new context
+	c := context.Background()
+
 	// insert into database
-	if _, err := h.DB.Collection("documents").InsertOne(c, document, nil); err != nil {
-		return err
+	if _, er := h.DB.Collection("documents").InsertOne(c, document, nil); er != nil {
+		log.Println(er)
+
+		return echo.ErrInternalServerError
 	}
 
 	return ctx.NoContent(http.StatusOK)
