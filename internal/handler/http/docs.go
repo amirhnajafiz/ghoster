@@ -149,5 +149,7 @@ func (h HTTP) Use(ctx echo.Context) error {
 		return echo.ErrInternalServerError
 	}
 
+	h.Channel <- doc.StoragePath
+
 	return ctx.String(http.StatusOK, doc.StoragePath)
 }
