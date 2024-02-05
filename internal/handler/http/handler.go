@@ -13,6 +13,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 const baseDir = "./files/"
@@ -86,6 +87,39 @@ func (h HTTP) Upload(ctx echo.Context) error {
 	}
 
 	return ctx.NoContent(http.StatusOK)
+}
+
+// List returns a list of current uploads.
+func (h HTTP) List(ctx echo.Context) error {
+	// create context
+	c := context.Background()
+
+	// create filter
+	filter := bson.D{}
+
+	// query for documents
+	cursor, err := h.DB.Collection("documents", nil).Find(c, filter, nil)
+	if err != nil {
+		log.Println(err)
+
+		return echo.ErrInternalServerError
+	}
+
+	// create a docs list for fetching
+	ids := make([]string, 0)
+
+	for cursor.Next(c) {
+		var tmp models.Document
+		if err := cursor.Decode(&tmp); err != nil {
+			log.Println(err)
+
+			return echo.ErrInternalServerError
+		}
+
+		ids = append(ids, tmp.UUID+" "+tmp.Title)
+	}
+
+	return ctx.JSON(http.StatusOK, ids)
 }
 
 func (h HTTP) Use(ctx echo.Context) error {
