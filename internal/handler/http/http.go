@@ -21,7 +21,8 @@ func (h HTTP) Healthy(ctx echo.Context) error {
 func (h HTTP) Register(app *echo.Echo) {
 	app.GET("/", h.Healthy)
 
-	api := app.Group("/api")
-	api.POST("/upload", h.Upload)
-	api.GET("/use/:uuid", h.Use)
+	api := app.Group("/api/docs")
+	api.POST("/", h.Upload)
+	api.GET("/", h.List)
+	api.GET("/:uid", h.Use)
 }
