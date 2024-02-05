@@ -10,5 +10,4 @@ type Document struct {
 	Forbidden   bool      `bson:"forbidden"`
 	LastExecute time.Time `bson:"last_execute"`
 	CreatedAt   time.Time `bson:"created_at"`
-	DeletedAt   time.Time `bson:"deleted_at"`
 }

@@ -6,11 +6,20 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
+	"github.com/amirhnajafiz/ghoster/pkg/models"
+
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 )
 
 func (h HTTP) Upload(ctx echo.Context) error {
+	title := ctx.FormValue("title")
+	user := ctx.FormValue("user")
+	uid := uuid.New().String()
+	now := time.Now()
+
 	// get file from form data
 	file, err := ctx.FormFile("project")
 	if err != nil {
@@ -48,8 +57,21 @@ func (h HTTP) Upload(ctx echo.Context) error {
 		return echo.ErrInternalServerError
 	}
 
+	document := models.Document{
+		Title:       title,
+		User:        user,
+		UUID:        uid,
+		CreatedAt:   now,
+		Forbidden:   false,
+		StoragePath: dst.Name(),
+	}
+
 	_ = src.Close()
 	_ = dst.Close()
+
+	if _, err := h.DB.Collection("").InsertOne(nil, document, nil); err != nil {
+		return err
+	}
 
 	return ctx.NoContent(http.StatusOK)
 }
