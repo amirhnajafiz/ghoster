@@ -3,12 +3,15 @@ package http
 import (
 	"net/http"
 
+	"github.com/amirhnajafiz/ghoster/pkg/logger"
+
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type HTTP struct {
-	DB *mongo.Database
+	DB     *mongo.Database
+	Logger logger.Logger
 }
 
 func (h HTTP) Healthy(ctx echo.Context) error {

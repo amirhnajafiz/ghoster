@@ -3,7 +3,6 @@ package http
 import (
 	"context"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -28,7 +27,7 @@ func (h HTTP) Upload(ctx echo.Context) error {
 	// get file from form data
 	file, err := ctx.FormFile("project")
 	if err != nil {
-		log.Println(err)
+		h.Logger.Error(err)
 
 		return echo.ErrBadRequest
 	}
@@ -44,7 +43,7 @@ func (h HTTP) Upload(ctx echo.Context) error {
 	// open file
 	src, err := file.Open()
 	if err != nil {
-		log.Println(err)
+		h.Logger.Error(err)
 
 		return echo.ErrInternalServerError
 	}
@@ -52,14 +51,14 @@ func (h HTTP) Upload(ctx echo.Context) error {
 	// create local file
 	dst, err := os.Create(path)
 	if err != nil {
-		log.Println(err)
+		h.Logger.Error(err)
 
 		return echo.ErrInternalServerError
 	}
 
 	// save content
 	if _, err = io.Copy(dst, src); err != nil {
-		log.Println(err)
+		h.Logger.Error(err)
 
 		return echo.ErrInternalServerError
 	}
@@ -81,7 +80,7 @@ func (h HTTP) Upload(ctx echo.Context) error {
 
 	// insert into database
 	if _, er := h.DB.Collection("documents").InsertOne(c, document, nil); er != nil {
-		log.Println(er)
+		h.Logger.Error(er)
 
 		return echo.ErrInternalServerError
 	}
@@ -100,7 +99,7 @@ func (h HTTP) List(ctx echo.Context) error {
 	// query for documents
 	cursor, err := h.DB.Collection("documents", nil).Find(c, filter, nil)
 	if err != nil {
-		log.Println(err)
+		h.Logger.Error(err)
 
 		return echo.ErrInternalServerError
 	}
@@ -111,7 +110,7 @@ func (h HTTP) List(ctx echo.Context) error {
 	for cursor.Next(c) {
 		var tmp models.Document
 		if err := cursor.Decode(&tmp); err != nil {
-			log.Println(err)
+			h.Logger.Error(err)
 
 			return echo.ErrInternalServerError
 		}
@@ -138,14 +137,14 @@ func (h HTTP) Use(ctx echo.Context) error {
 
 	cursor := h.DB.Collection("documents").FindOne(c, filter, nil)
 	if err := cursor.Err(); err != nil {
-		log.Println(err)
+		h.Logger.Error(err)
 
 		return echo.ErrInternalServerError
 	}
 
 	// parse into the docs object
 	if err := cursor.Decode(doc); err != nil {
-		log.Println(err)
+		h.Logger.Error(err)
 
 		return echo.ErrInternalServerError
 	}
