@@ -79,7 +79,7 @@ func (h HTTP) Upload(ctx echo.Context) error {
 	c := context.Background()
 
 	// insert into database
-	if _, er := h.DB.Collection("documents").InsertOne(c, document, nil); er != nil {
+	if _, er := h.DB.Collection(h.Collection).InsertOne(c, document, nil); er != nil {
 		h.Logger.Error(er)
 
 		return echo.ErrInternalServerError
@@ -97,7 +97,7 @@ func (h HTTP) List(ctx echo.Context) error {
 	filter := bson.D{}
 
 	// query for documents
-	cursor, err := h.DB.Collection("documents", nil).Find(c, filter, nil)
+	cursor, err := h.DB.Collection(h.Collection, nil).Find(c, filter, nil)
 	if err != nil {
 		h.Logger.Error(err)
 
@@ -135,7 +135,7 @@ func (h HTTP) Use(ctx echo.Context) error {
 	// fetch the first object
 	doc := new(models.Document)
 
-	cursor := h.DB.Collection("documents").FindOne(c, filter, nil)
+	cursor := h.DB.Collection(h.Collection).FindOne(c, filter, nil)
 	if err := cursor.Err(); err != nil {
 		h.Logger.Error(err)
 

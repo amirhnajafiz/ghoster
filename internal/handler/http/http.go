@@ -10,8 +10,9 @@ import (
 )
 
 type HTTP struct {
-	DB     *mongo.Database
-	Logger logger.Logger
+	Collection string
+	DB         *mongo.Database
+	Logger     logger.Logger
 }
 
 func (h HTTP) Healthy(ctx echo.Context) error {
