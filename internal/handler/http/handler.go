@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"io"
 	"log"
 	"net/http"
@@ -14,11 +15,16 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+const baseDir = "./files/"
+
 func (h HTTP) Upload(ctx echo.Context) error {
+	// create a new context
+	c := context.Background()
+
+	// get title and create uid for document
 	title := ctx.FormValue("title")
-	user := ctx.FormValue("user")
 	uid := uuid.New().String()
-	now := time.Now()
+	path := baseDir + uid + "."
 
 	// get file from form data
 	file, err := ctx.FormFile("project")
@@ -34,6 +40,8 @@ func (h HTTP) Upload(ctx echo.Context) error {
 		return echo.ErrBadRequest
 	}
 
+	path = path + file.Filename
+
 	// open file
 	src, err := file.Open()
 	if err != nil {
@@ -43,7 +51,7 @@ func (h HTTP) Upload(ctx echo.Context) error {
 	}
 
 	// create local file
-	dst, err := os.Create(file.Filename)
+	dst, err := os.Create(path)
 	if err != nil {
 		log.Println(err)
 
@@ -57,19 +65,20 @@ func (h HTTP) Upload(ctx echo.Context) error {
 		return echo.ErrInternalServerError
 	}
 
-	document := models.Document{
-		Title:       title,
-		User:        user,
-		UUID:        uid,
-		CreatedAt:   now,
-		Forbidden:   false,
-		StoragePath: dst.Name(),
-	}
-
 	_ = src.Close()
 	_ = dst.Close()
 
-	if _, err := h.DB.Collection("").InsertOne(nil, document, nil); err != nil {
+	// create a new document instance
+	document := models.Document{
+		Title:       title,
+		UUID:        uid,
+		CreatedAt:   time.Now(),
+		Forbidden:   false,
+		StoragePath: path,
+	}
+
+	// insert into database
+	if _, err := h.DB.Collection("documents").InsertOne(c, document, nil); err != nil {
 		return err
 	}
 

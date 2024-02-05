@@ -5,7 +5,6 @@ import "time"
 type Document struct {
 	UUID        string    `bson:"id"`
 	Title       string    `bson:"title"`
-	User        string    `bson:"user"`
 	StoragePath string    `bson:"storage_path"`
 	Forbidden   bool      `bson:"forbidden"`
 	LastExecute time.Time `bson:"last_execute"`
