@@ -122,10 +122,33 @@ func (h HTTP) List(ctx echo.Context) error {
 	return ctx.JSON(http.StatusOK, ids)
 }
 
+// Use handles the project execution.
 func (h HTTP) Use(ctx echo.Context) error {
-	uuid := ctx.Param("uuid")
+	// get uid
+	uid := ctx.Param("uid")
 
-	log.Println(uuid)
+	// create context
+	c := context.Background()
 
-	return nil
+	// create filter
+	filter := bson.M{"uuid": uid}
+
+	// fetch the first object
+	doc := new(models.Document)
+
+	cursor := h.DB.Collection("documents").FindOne(c, filter, nil)
+	if err := cursor.Err(); err != nil {
+		log.Println(err)
+
+		return echo.ErrInternalServerError
+	}
+
+	// parse into the docs object
+	if err := cursor.Decode(doc); err != nil {
+		log.Println(err)
+
+		return echo.ErrInternalServerError
+	}
+
+	return ctx.String(http.StatusOK, doc.StoragePath)
 }

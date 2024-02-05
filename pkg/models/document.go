@@ -3,7 +3,7 @@ package models
 import "time"
 
 type Document struct {
-	UUID        string    `bson:"id"`
+	UUID        string    `bson:"uuid"`
 	Title       string    `bson:"title"`
 	StoragePath string    `bson:"storage_path"`
 	Forbidden   bool      `bson:"forbidden"`
