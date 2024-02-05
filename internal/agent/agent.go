@@ -15,6 +15,8 @@ type Agent struct {
 }
 
 func (a Agent) Listen() {
+	a.Pool = NewPool(10)
+
 	for {
 		path := <-a.Channel
 
