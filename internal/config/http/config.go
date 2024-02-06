@@ -1,3 +1,5 @@
 package http
 
-type Config struct{}
+type Config struct {
+	Port int
+}

@@ -1,16 +1,37 @@
 package main
 
-import "github.com/amirhnajafiz/ghoster/pkg/logger"
+import (
+	"github.com/amirhnajafiz/ghoster/internal/agent"
+	"github.com/amirhnajafiz/ghoster/internal/config"
+	"github.com/amirhnajafiz/ghoster/internal/handler/http"
+	"github.com/amirhnajafiz/ghoster/internal/storage/mongodb"
+	"github.com/amirhnajafiz/ghoster/pkg/logger"
+)
 
 func main() {
-	l := logger.New(logger.ErrorLevel).Trace("A")
-	b := l.Trace("B")
+	// load configs
+	cfg := config.Config{}
 
-	l.Error(nil, "m", "A")
-	b.Error(nil, "m", "B")
+	// create a new logger
+	log := logger.New(logger.ErrorLevel)
 
-	c := b.Trace("C")
+	// open mongodb connection
+	db, err := mongodb.NewConnection(cfg.MongoDB)
+	if err != nil {
+		panic(err)
+	}
 
-	c.Info(nil, "m", "C")
-	c.Error(nil, "m", "C", "d", "B")
+	// create a new agent
+	a := agent.New(cfg.Agent.PoolSize)
+
+	// create a new handler
+	h := http.HTTP{
+		Agent:      a,
+		DB:         db,
+		Logger:     log.Trace("http"),
+		Collection: cfg.MongoDB.Database,
+	}
+
+	// register http handler
+	h.Register(cfg.HTTP.Port)
 }
