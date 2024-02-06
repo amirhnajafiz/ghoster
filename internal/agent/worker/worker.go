@@ -2,14 +2,10 @@ package worker
 
 import "log"
 
-type Worker struct {
-	Pipe chan string
-}
+type Worker struct{}
 
-func (w Worker) Work() {
-	for {
-		path := <-w.Pipe
+func (w Worker) Work(path string) error {
+	log.Println(path)
 
-		log.Println(path)
-	}
+	return nil
 }

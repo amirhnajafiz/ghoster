@@ -1,31 +1,16 @@
 package agent
 
-import (
-	"github.com/amirhnajafiz/ghoster/internal/agent/worker"
-)
+import "github.com/amirhnajafiz/ghoster/internal/agent/worker"
 
-type Pool struct {
-	pipe chan string
-}
+type Pool struct{}
 
-func NewPool(number int) *Pool {
+func NewPool() *Pool {
 	// create pool with internal channels
-	pool := &Pool{
-		pipe: make(chan string),
-	}
-
-	// create workers
-	for i := 0; i < number; i++ {
-		w := worker.Worker{
-			Pipe: pool.pipe,
-		}
-
-		go w.Work()
-	}
+	pool := &Pool{}
 
 	return pool
 }
 
-func (p Pool) Add(msg string) {
-	p.pipe <- msg
+func (p *Pool) Throw(input string) error {
+	return worker.Worker{}.Work(input)
 }

@@ -1,27 +1,38 @@
 package agent
 
-import (
-	"github.com/amirhnajafiz/ghoster/pkg/logger"
-
-	"go.mongodb.org/mongo-driver/mongo"
-)
+import "github.com/amirhnajafiz/ghoster/pkg/logger"
 
 type Agent struct {
-	WorkerPool *Pool
-	DB         *mongo.Database
-	Logger     logger.Logger
+	workerPool *Pool
+	logger     logger.Logger
 
-	Channel    chan string
-	Collection string
-	PoolSize   int
+	stdin  chan interface{}
+	stdout chan interface{}
+}
+
+func New(logger logger.Logger) *Agent {
+	return &Agent{
+		workerPool: NewPool(),
+		stdin:      make(chan interface{}),
+		stdout:     make(chan interface{}),
+		logger:     logger,
+	}
+}
+
+func (a Agent) GetStdin() chan interface{} {
+	return a.stdin
+}
+
+func (a Agent) GetStdout() chan interface{} {
+	return a.stdout
 }
 
 func (a Agent) Listen() {
-	a.WorkerPool = NewPool(a.PoolSize)
-
 	for {
-		path := <-a.Channel
+		path := <-a.stdin
 
-		a.WorkerPool.Add(path)
+		if err := a.workerPool.Throw(path.(string)); err != nil {
+			a.stdout <- err.Error()
+		}
 	}
 }
