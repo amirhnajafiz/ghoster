@@ -12,6 +12,11 @@ type Agent struct {
 	Logger     logger.Logger
 	Channel    chan string
 	Collection string
+	PoolSize   int
+}
+
+func (a Agent) Done() {
+
 }
 
 func (a Agent) Listen() {
@@ -19,11 +24,8 @@ func (a Agent) Listen() {
 	a.WorkerPool = NewPool(counter)
 
 	for {
-		select {
-		case path := <-a.Channel:
-			a.WorkerPool.Channel <- path
-		case <-a.WorkerPool.Pipe:
-			counter--
-		}
+		path := <-a.Channel
+
+		a.WorkerPool.Channel <- path
 	}
 }
