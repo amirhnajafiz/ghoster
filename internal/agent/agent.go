@@ -5,34 +5,18 @@ import "github.com/amirhnajafiz/ghoster/pkg/logger"
 type Agent struct {
 	workerPool *Pool
 	logger     logger.Logger
-
-	stdin  chan interface{}
-	stdout chan interface{}
 }
 
-func New(logger logger.Logger) *Agent {
+func New(l logger.Logger, poolSize int) *Agent {
+	pool := NewPool(poolSize)
+	go pool.listen()
+
 	return &Agent{
-		workerPool: NewPool(),
-		stdin:      make(chan interface{}),
-		stdout:     make(chan interface{}),
-		logger:     logger,
+		workerPool: pool,
+		logger:     l,
 	}
 }
 
-func (a Agent) GetStdin() chan interface{} {
-	return a.stdin
-}
-
-func (a Agent) GetStdout() chan interface{} {
-	return a.stdout
-}
-
-func (a Agent) Listen() {
-	for {
-		path := <-a.stdin
-
-		if err := a.workerPool.Throw(path.(string)); err != nil {
-			a.stdout <- err.Error()
-		}
-	}
+func (a Agent) NewWorker() Worker {
+	return a.workerPool.borrow()
 }

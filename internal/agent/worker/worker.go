@@ -1,11 +1,36 @@
 package worker
 
-import "log"
+type Worker struct {
+	stdin  chan interface{}
+	stdout chan interface{}
+	pipe   chan int
+}
 
-type Worker struct{}
+func New(pipe chan int) *Worker {
+	return &Worker{
+		stdin:  make(chan interface{}),
+		stdout: make(chan interface{}),
+		pipe:   pipe,
+	}
+}
 
-func (w Worker) Work(path string) error {
-	log.Println(path)
+func (w *Worker) GetStdin() chan interface{} {
+	return w.stdin
+}
 
-	return nil
+func (w *Worker) GetStdout() chan interface{} {
+	return w.stdout
+}
+
+func (w *Worker) Work() {
+	for {
+		data := <-w.stdin
+		if data == "DONE" {
+			w.pipe <- 1
+
+			return
+		}
+
+		w.stdout <- data
+	}
 }
