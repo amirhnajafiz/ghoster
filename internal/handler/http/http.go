@@ -3,6 +3,7 @@ package http
 import (
 	"net/http"
 
+	"github.com/amirhnajafiz/ghoster/internal/agent"
 	"github.com/amirhnajafiz/ghoster/pkg/logger"
 
 	"github.com/labstack/echo/v4"
@@ -11,9 +12,9 @@ import (
 
 type HTTP struct {
 	DB         *mongo.Database
+	Agent      *agent.Agent
 	Logger     logger.Logger
 	Collection string
-	Channel    chan string
 }
 
 func (h HTTP) Healthy(ctx echo.Context) error {

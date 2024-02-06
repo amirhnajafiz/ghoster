@@ -149,7 +149,16 @@ func (h HTTP) Use(ctx echo.Context) error {
 		return echo.ErrInternalServerError
 	}
 
-	h.Channel <- doc.StoragePath
+	// create a new worker
+	w := h.Agent.NewWorker()
 
-	return ctx.String(http.StatusOK, doc.StoragePath)
+	// get worker stdin and stdout
+	stdin := w.GetStdin()
+	stdout := w.GetStdout()
+
+	// give the input and get the result
+	stdin <- doc.StoragePath
+	result := <-stdout
+
+	return ctx.String(http.StatusOK, result.(string))
 }
