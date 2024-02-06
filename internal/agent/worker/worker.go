@@ -3,8 +3,7 @@ package worker
 import "log"
 
 type Worker struct {
-	Pipe   chan string
-	Stdout chan string
+	Pipe chan string
 }
 
 func (w Worker) Work() {
