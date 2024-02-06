@@ -150,7 +150,12 @@ func (h HTTP) Use(ctx echo.Context) error {
 	}
 
 	// create a new worker
-	w := h.Agent.NewWorker()
+	w, err := h.Agent.NewWorker()
+	if err != nil {
+		h.Logger.Error(err)
+
+		return echo.ErrInternalServerError
+	}
 
 	// get worker stdin and stdout
 	stdin := w.GetStdin()

@@ -1,15 +1,14 @@
 package agent
 
-import "github.com/amirhnajafiz/ghoster/pkg/logger"
+import "fmt"
 
 // Agent manages the workers by
 // using a worker pool.
 type Agent struct {
 	workerPool *Pool
-	logger     logger.Logger
 }
 
-func New(l logger.Logger, poolSize int) *Agent {
+func New(poolSize int) *Agent {
 	pool := NewPool(poolSize)
 
 	// listening on workers to manage their status
@@ -17,12 +16,16 @@ func New(l logger.Logger, poolSize int) *Agent {
 
 	return &Agent{
 		workerPool: pool,
-		logger:     l,
 	}
 }
 
 // NewWorker generates a new worker for
 // clients.
-func (a Agent) NewWorker() Worker {
-	return a.workerPool.borrow()
+func (a Agent) NewWorker() (Worker, error) {
+	w, err := a.workerPool.borrow()
+	if err != nil {
+		return nil, fmt.Errorf("failed to create worker: %w", err)
+	}
+
+	return w, nil
 }
