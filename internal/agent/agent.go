@@ -7,7 +7,7 @@ import (
 )
 
 type Agent struct {
-	WorkerPool Pool
+	WorkerPool *Pool
 	DB         *mongo.Database
 	Logger     logger.Logger
 	Channel    chan string
@@ -20,8 +20,7 @@ func (a Agent) Done() {
 }
 
 func (a Agent) Listen() {
-	counter := 10
-	a.WorkerPool = NewPool(counter)
+	a.WorkerPool = NewPool(a.PoolSize)
 
 	for {
 		path := <-a.Channel

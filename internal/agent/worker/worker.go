@@ -1,16 +1,15 @@
 package worker
 
-import (
-	"log"
-)
+import "log"
 
 type Worker struct {
-	Channel chan string
+	Pipe   chan string
+	Stdout chan string
 }
 
 func (w Worker) Work() {
 	for {
-		path := <-w.Channel
+		path := <-w.Pipe
 
 		log.Println(path)
 	}
