@@ -1,47 +1,58 @@
 package agent
 
 import (
+	"context"
 	"time"
 
 	"github.com/amirhnajafiz/ghoster/internal/agent/worker"
+
+	"golang.org/x/sync/semaphore"
 )
 
+// Pool manages the workers.
 type Pool struct {
-	limit int
-	inuse int
-	pipe  chan int
+	semaphore *semaphore.Weighted
+	pipe      chan int
 }
 
 func NewPool(limit int) *Pool {
-	// create pool with internal channels
+	// create pool with internal channels and a semaphore
 	pool := &Pool{
-		limit: limit,
-		inuse: 0,
-		pipe:  make(chan int),
+		semaphore: semaphore.NewWeighted(int64(limit)),
+		pipe:      make(chan int),
 	}
 
 	return pool
 }
 
+// listen on workers status.
 func (p *Pool) listen() {
 	for {
+		// wait for a worker to finish
 		<-p.pipe
-		p.inuse--
+
+		// release semaphore
+		p.semaphore.Release(1)
 	}
 }
 
-func (p *Pool) borrow() *worker.Worker {
+// borrow creates a new worker, but before doing that
+// it trys to acquire the pool semaphore.
+func (p *Pool) borrow() (*worker.Worker, error) {
+	// create a new context with 10 seconds limit
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
 	for {
-		if p.limit == p.inuse {
-			time.Sleep(1 * time.Second)
-			continue
+		// wait for a free worker
+		if err := p.semaphore.Acquire(ctx, 1); err != nil {
+			return nil, err
 		}
 
-		p.inuse++
-
+		// create a new worker
 		w := worker.New(p.pipe)
 		go w.Work()
 
-		return w
+		return w, nil
 	}
 }

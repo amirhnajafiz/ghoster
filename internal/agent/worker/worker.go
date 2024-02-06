@@ -1,5 +1,8 @@
 package worker
 
+// Worker is a process manager for executing
+// user projects by creating a new process
+// and returning the process stdout.
 type Worker struct {
 	stdin  chan interface{}
 	stdout chan interface{}
@@ -14,14 +17,18 @@ func New(pipe chan int) *Worker {
 	}
 }
 
+// GetStdin of the worker.
 func (w *Worker) GetStdin() chan interface{} {
 	return w.stdin
 }
 
+// GetStdout of the worker.
 func (w *Worker) GetStdout() chan interface{} {
 	return w.stdout
 }
 
+// Work handles the logic of our
+// processor.
 func (w *Worker) Work() {
 	for {
 		data := <-w.stdin
@@ -30,6 +37,10 @@ func (w *Worker) Work() {
 
 			return
 		}
+
+		// TODO: unzip the path
+		// TODO: execute main.go
+		// TODO: return output
 
 		w.stdout <- data
 	}
