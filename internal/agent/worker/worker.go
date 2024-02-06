@@ -1,15 +1,24 @@
 package worker
 
-import "log"
+import (
+	"log"
+)
 
 type Worker struct {
-	Channel chan string
+	Terminate chan bool
+	Pipe      chan int
+	Channel   chan string
 }
 
 func (w Worker) Work() {
 	for {
-		path := <-w.Channel
+		select {
+		case path := <-w.Channel:
+			log.Println(path)
+		case <-w.Terminate:
+			w.Pipe <- 1
 
-		log.Println(path)
+			return
+		}
 	}
 }
