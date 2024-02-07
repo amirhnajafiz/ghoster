@@ -29,7 +29,7 @@ func main() {
 		Agent:      a,
 		DB:         db,
 		Logger:     log.Trace("http"),
-		Collection: cfg.MongoDB.Database,
+		Collection: cfg.MongoDB.Collection,
 	}
 
 	// register http handler
