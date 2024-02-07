@@ -10,7 +10,7 @@ import (
 
 func main() {
 	// load configs
-	cfg := config.Config{}
+	cfg := config.Load()
 
 	// create a new logger
 	log := logger.New(logger.ErrorLevel)

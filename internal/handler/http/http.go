@@ -23,8 +23,10 @@ func (h HTTP) Healthy(ctx echo.Context) error {
 }
 
 func (h HTTP) Register(port int) {
+	// create new echo app
 	app := echo.New()
 
+	// register endpoints
 	app.GET("/", h.Healthy)
 
 	api := app.Group("/api/docs")
@@ -32,6 +34,7 @@ func (h HTTP) Register(port int) {
 	api.GET("/", h.List)
 	api.GET("/:uid", h.Use)
 
+	// start echo app
 	if err := app.Start(fmt.Sprintf(":%d", port)); err != nil {
 		panic(err)
 	}

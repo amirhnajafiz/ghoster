@@ -1,7 +1,7 @@
 package mongodb
 
 type Config struct {
-	Collection string `koanf:"collection"`
-	Database   string `koanf:"database"`
-	URI        string `koanf:"uri"`
+	Collection string
+	Database   string
+	URI        string
 }
