@@ -38,9 +38,9 @@ func (p *Pool) listen() {
 
 // borrow creates a new worker, but before doing that
 // it trys to acquire the pool semaphore.
-func (p *Pool) borrow() (*worker.Worker, error) {
+func (p *Pool) borrow(timeout int) (*worker.Worker, error) {
 	// create a new context with 10 seconds limit
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeout)*time.Second)
 	defer cancel()
 
 	for {

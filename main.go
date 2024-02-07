@@ -22,7 +22,7 @@ func main() {
 	}
 
 	// create a new agent
-	a := agent.New(cfg.Agent.PoolSize)
+	a := agent.New(cfg.Agent.PoolSize, cfg.Agent.Timeout)
 
 	// create a new handler
 	h := http.HTTP{
