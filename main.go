@@ -13,7 +13,7 @@ func main() {
 	cfg := config.Load()
 
 	// create a new logger
-	log := logger.New(logger.ErrorLevel)
+	log := logger.New(logger.Level(cfg.Logger.Level))
 
 	// open mongodb connection
 	db, err := mongodb.NewConnection(cfg.MongoDB)

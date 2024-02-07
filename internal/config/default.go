@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/amirhnajafiz/ghoster/internal/config/agent"
 	"github.com/amirhnajafiz/ghoster/internal/config/http"
+	"github.com/amirhnajafiz/ghoster/internal/config/logger"
 	"github.com/amirhnajafiz/ghoster/internal/storage/mongodb"
 )
 
@@ -18,6 +19,9 @@ func Default() Config {
 			URI:        "",
 			Database:   "",
 			Collection: "",
+		},
+		Logger: logger.Config{
+			Level: 1,
 		},
 	}
 }
