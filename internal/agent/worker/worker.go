@@ -1,5 +1,7 @@
 package worker
 
+import "github.com/amirhnajafiz/ghoster/pkg/enum"
+
 // Worker is a process manager for executing
 // user projects by creating a new process
 // and returning the process stdout.
@@ -32,7 +34,7 @@ func (w *Worker) GetStdout() chan interface{} {
 func (w *Worker) Work() {
 	for {
 		data := <-w.stdin
-		if data == "DONE" {
+		if data == enum.CodeDismiss {
 			w.pipe <- 1
 
 			return

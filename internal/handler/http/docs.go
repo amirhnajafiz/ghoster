@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/amirhnajafiz/ghoster/pkg/enum"
 	"github.com/amirhnajafiz/ghoster/pkg/models"
 
 	"github.com/google/uuid"
@@ -161,9 +162,20 @@ func (h HTTP) Use(ctx echo.Context) error {
 	stdin := w.GetStdin()
 	stdout := w.GetStdout()
 
-	// give the input and get the result
+	// pass the storage path for starting the process
 	stdin <- doc.StoragePath
-	result := <-stdout
 
-	return ctx.String(http.StatusOK, result.(string))
+	// get the result from the process
+	result := <-stdout
+	msg := result.(string)
+
+	// on failure handler
+	if msg == string(enum.CodeFailure) {
+		return ctx.NoContent(http.StatusBadRequest)
+	}
+
+	// on success, dismiss the process
+	stdin <- enum.CodeDismiss
+
+	return ctx.String(http.StatusOK, msg)
 }

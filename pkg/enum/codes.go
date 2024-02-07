@@ -3,7 +3,6 @@ package enum
 type Code string
 
 const (
-	CodeSuccess Code = "success"
-	CodeFailure      = "failure"
+	CodeFailure Code = "failure"
 	CodeDismiss      = "done"
 )
