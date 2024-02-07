@@ -169,13 +169,31 @@ func (h HTTP) Use(ctx echo.Context) error {
 	result := <-stdout
 	msg := result.(string)
 
+	// dismiss the process
+	stdin <- enum.CodeDismiss
+
+	// update fields
+	update := bson.D{
+		{
+			"$set",
+			bson.D{
+				{"forbidden", msg == string(enum.CodeFailure)},
+				{"last_execute", time.Now()},
+			},
+		},
+	}
+
+	// update document
+	if _, er := h.DB.Collection(h.Collection).UpdateOne(c, filter, update, nil); er != nil {
+		h.Logger.Error(er)
+
+		return echo.ErrInternalServerError
+	}
+
 	// on failure handler
 	if msg == string(enum.CodeFailure) {
 		return ctx.NoContent(http.StatusBadRequest)
 	}
-
-	// on success, dismiss the process
-	stdin <- enum.CodeDismiss
 
 	return ctx.String(http.StatusOK, msg)
 }
