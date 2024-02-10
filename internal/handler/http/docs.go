@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/amirhnajafiz/ghoster/pkg/enum"
 	"github.com/amirhnajafiz/ghoster/pkg/models"
 
 	"github.com/google/uuid"
@@ -127,73 +126,10 @@ func (h HTTP) Use(ctx echo.Context) error {
 	// get uid
 	uid := ctx.Param("uid")
 
-	// create context
-	c := context.Background()
-
-	// create filter
-	filter := bson.M{"uuid": uid}
-
-	// fetch the first object
-	doc := new(models.Document)
-
-	cursor := h.DB.Collection(h.Collection).FindOne(c, filter, nil)
-	if err := cursor.Err(); err != nil {
-		h.Logger.Error(err)
-
-		return echo.ErrInternalServerError
+	// run the provider
+	if err := h.Provider(uid); err != nil {
+		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
-	// parse into the docs object
-	if err := cursor.Decode(doc); err != nil {
-		h.Logger.Error(err)
-
-		return echo.ErrInternalServerError
-	}
-
-	// create a new worker
-	w, err := h.Agent.NewWorker()
-	if err != nil {
-		h.Logger.Error(err)
-
-		return echo.ErrInternalServerError
-	}
-
-	// get worker stdin and stdout
-	stdin := w.GetStdin()
-	stdout := w.GetStdout()
-
-	// pass the storage path for starting the process
-	stdin <- doc.StoragePath
-
-	// get the result from the process
-	result := <-stdout
-	msg := result.(string)
-
-	// dismiss the process
-	stdin <- enum.CodeDismiss
-
-	// update fields
-	update := bson.D{
-		{
-			"$set",
-			bson.D{
-				{"forbidden", msg == string(enum.CodeFailure)},
-				{"last_execute", time.Now()},
-			},
-		},
-	}
-
-	// update document
-	if _, er := h.DB.Collection(h.Collection).UpdateOne(c, filter, update, nil); er != nil {
-		h.Logger.Error(er)
-
-		return echo.ErrInternalServerError
-	}
-
-	// on failure handler
-	if msg == string(enum.CodeFailure) {
-		return ctx.NoContent(http.StatusBadRequest)
-	}
-
-	return ctx.String(http.StatusOK, msg)
+	return ctx.NoContent(http.StatusOK)
 }
