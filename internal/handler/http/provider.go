@@ -8,12 +8,15 @@ import (
 	"github.com/amirhnajafiz/ghoster/pkg/enum"
 	"github.com/amirhnajafiz/ghoster/pkg/models"
 
-	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 var (
-	ErrDocumentNotFound = errors.New("")
+	ErrDocumentNotFound = errors.New("document not found")
+	ErrDocumentUpdate   = errors.New("failed to update document")
+	ErrBadResult        = errors.New("failed to execute the project")
+	ErrFailedToParseDoc = errors.New("failed to parse document")
+	ErrWorker           = errors.New("failed to create worker")
 )
 
 func (h HTTP) Provider(uid string) error {
@@ -29,14 +32,14 @@ func (h HTTP) Provider(uid string) error {
 	if err := cursor.Err(); err != nil {
 		h.Logger.Error(err)
 
-		return echo.ErrInternalServerError
+		return ErrDocumentNotFound
 	}
 
 	// parse into the docs object
 	if err := cursor.Decode(doc); err != nil {
 		h.Logger.Error(err)
 
-		return echo.ErrInternalServerError
+		return ErrFailedToParseDoc
 	}
 
 	// create a new worker
@@ -44,7 +47,7 @@ func (h HTTP) Provider(uid string) error {
 	if err != nil {
 		h.Logger.Error(err)
 
-		return echo.ErrInternalServerError
+		return ErrWorker
 	}
 
 	// get worker stdin and stdout
@@ -61,12 +64,14 @@ func (h HTTP) Provider(uid string) error {
 	// dismiss the process
 	stdin <- enum.CodeDismiss
 
+	flag := msg == string(enum.CodeFailure)
+
 	// update fields
 	update := bson.D{
 		{
 			"$set",
 			bson.D{
-				{"forbidden", msg == string(enum.CodeFailure)},
+				{"forbidden", flag},
 				{"last_execute", time.Now()},
 			},
 		},
@@ -76,7 +81,12 @@ func (h HTTP) Provider(uid string) error {
 	if _, er := h.DB.Collection(h.Collection).UpdateOne(c, filter, update, nil); er != nil {
 		h.Logger.Error(er)
 
-		return echo.ErrInternalServerError
+		return ErrDocumentUpdate
+	}
+
+	// return err on failed message
+	if flag {
+		return ErrBadResult
 	}
 
 	return nil
