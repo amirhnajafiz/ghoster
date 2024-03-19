@@ -49,17 +49,16 @@ func (w *Worker) Work() {
 
 		// create source and dest addresses
 		source := data.(string)
-		dest := fmt.Sprintf("./data/%s/file.zip", uuid.NewString())
+		dest := fmt.Sprintf("./data/%s", uuid.NewString())
 
 		// copy file to new path
-		if err := utils.CopyFileContents(source, dest); err != nil {
+		if err := utils.Unzip(source, dest); err != nil {
 			w.stdout <- enum.CodeFailure
 			w.pipe <- 1
 
 			return
 		}
 
-		// TODO: unzip the path
 		// TODO: execute main.go
 		// TODO: return output
 
