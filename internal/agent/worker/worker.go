@@ -1,6 +1,13 @@
 package worker
 
-import "github.com/amirhnajafiz/ghoster/pkg/enum"
+import (
+	"fmt"
+
+	"github.com/amirhnajafiz/ghoster/pkg/enum"
+	"github.com/amirhnajafiz/ghoster/pkg/utils"
+
+	"github.com/google/uuid"
+)
 
 // Worker is a process manager for executing
 // user projects by creating a new process
@@ -35,6 +42,18 @@ func (w *Worker) Work() {
 	for {
 		data := <-w.stdin
 		if data == enum.CodeDismiss {
+			w.pipe <- 1
+
+			return
+		}
+
+		// create source and dest addresses
+		source := data.(string)
+		dest := fmt.Sprintf("./data/%s/file.zip", uuid.NewString())
+
+		// copy file to new path
+		if err := utils.CopyFileContents(source, dest); err != nil {
+			w.stdout <- enum.CodeFailure
 			w.pipe <- 1
 
 			return
