@@ -2,6 +2,7 @@ package worker
 
 import (
 	"fmt"
+	"os/exec"
 
 	"github.com/amirhnajafiz/ghoster/pkg/enum"
 	"github.com/amirhnajafiz/ghoster/pkg/utils"
@@ -59,9 +60,19 @@ func (w *Worker) Work() {
 			return
 		}
 
-		// TODO: execute main.go
-		// TODO: return output
+		// execute main.go
+		cmd := exec.Command("go run main.go")
 
-		w.stdout <- data
+		// get stdout
+		stdout, err := cmd.Output()
+		if err != nil {
+			w.stdout <- enum.CodeFailure
+			w.pipe <- 1
+
+			return
+		}
+
+		// return output
+		w.stdout <- string(stdout)
 	}
 }
