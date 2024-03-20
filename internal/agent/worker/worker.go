@@ -61,7 +61,7 @@ func (w *Worker) Work() {
 		}
 
 		// execute main.go
-		cmd := exec.Command("go run main.go")
+		cmd := exec.Command("go", "run", "main.go")
 
 		// get stdout
 		stdout, err := cmd.Output()
