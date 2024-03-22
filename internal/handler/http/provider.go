@@ -69,10 +69,10 @@ func (h HTTP) Provider(uid string) error {
 	// update fields
 	update := bson.D{
 		{
-			"$set",
-			bson.D{
-				{"forbidden", flag},
-				{"last_execute", time.Now()},
+			Key: "$set",
+			Value: bson.D{
+				{Key: "forbidden", Value: flag},
+				{Key: "last_execute", Value: time.Now()},
 			},
 		},
 	}
