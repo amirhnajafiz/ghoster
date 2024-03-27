@@ -1,33 +1,45 @@
 package filemanager
 
 import (
-	"io/ioutil"
+	"fmt"
+	"io"
 	"net/http"
+	"os"
+
+	"github.com/google/uuid"
 )
 
+const (
+	formFileLabel = "project"
+	storageDir    = "/files"
+)
+
+// upload a project into files directory.
 func (h Handler) upload(w http.ResponseWriter, r *http.Request) {
 	// parse our multipart form, 10 << 20 specifies a maximum upload of 10 MB files.
 	r.ParseMultipartForm(h.FileLimit << 20)
 
-	file, handler, err := r.FormFile("project")
+	// get file from form-data
+	file, handler, err := r.FormFile(formFileLabel)
 	if err != nil {
 		return
 	}
 
-	defer file.Close()
+	address := fmt.Sprintf("%s/%s/%s", storageDir, uuid.New().String(), handler.Filename)
 
-	tempFile, err := ioutil.TempFile("temp-images", "upload-*.png")
+	// create destination
+	dest, err := os.Create(address)
 	if err != nil {
 		return
 	}
 
-	defer tempFile.Close()
-
-	fileBytes, err := ioutil.ReadAll(file)
-	if err != nil {
+	// copy the files content
+	if _, err := io.Copy(dest, file); err != nil {
 		return
 	}
 
-	// write this byte array to our temporary file
-	tempFile.Write(fileBytes)
+	file.Close()
+	dest.Close()
+
+	w.Write([]byte("OK"))
 }
