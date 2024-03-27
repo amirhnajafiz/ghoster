@@ -24,7 +24,7 @@ func createProjectMetaFile(path, name string) error {
 	meta := model.FileMeta{
 		Name:      name,
 		CreatedAt: stamp,
-		Hash:      crypto.MD5Hash(fmt.Sprint("%s-%t", name, stamp)),
+		Hash:      crypto.MD5Hash(fmt.Sprintf("%s-%s", name, stamp)),
 	}
 
 	bytes, err := json.Marshal(meta)
