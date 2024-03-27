@@ -25,10 +25,19 @@ func (h Handler) upload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	address := fmt.Sprintf("%s/%s/%s", storageDir, uuid.New().String(), handler.Filename)
+	// create the project directory
+	path, err := createProjectDir(uuid.NewString())
+	if err != nil {
+		return
+	}
+
+	// create the project meta.json file
+	if err := createProjectMetaFile(path, handler.Filename); err != nil {
+		return
+	}
 
 	// create destination
-	dest, err := os.Create(address)
+	dest, err := os.Create(fmt.Sprintf("%s/%s", path, handler.Filename))
 	if err != nil {
 		return
 	}
