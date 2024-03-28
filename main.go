@@ -1,15 +1,20 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
+	"github.com/amirhnajafiz/ghoster/internal/config"
 	internalHttp "github.com/amirhnajafiz/ghoster/internal/http"
 
 	"github.com/gorilla/mux"
 )
 
 func main() {
+	// load env variables
+	cfg := config.Load()
+
 	// create a new mux router
 	router := mux.NewRouter()
 
@@ -21,7 +26,7 @@ func main() {
 	// create a new server
 	srv := &http.Server{
 		Handler: router,
-		Addr:    "127.0.0.1:5000",
+		Addr:    fmt.Sprintf("127.0.0.1:%d", cfg.HTTPPort),
 	}
 
 	// start the http server
