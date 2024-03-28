@@ -49,8 +49,23 @@ func (h Handler) ExecuteFunction(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	functionName := vars["function"]
 
+	// parse json body
+	decoder := json.NewDecoder(r.Body)
+	var req Request
+
+	if err := decoder.Decode(&req); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+
+		log.Println(err)
+
+		return
+	}
+
+	args := []string{"run", "main.go"}
+	args = append(args, req.Args...)
+
 	// function execute command
-	cmd := exec.Command("go", "run", "main.go", "1", "2")
+	cmd := exec.Command("go", args...)
 	cmd.Dir = fmt.Sprintf("%s/%s", functionsDir, functionName)
 
 	h.Metrics.ExecuteRequests.With(prometheus.Labels{"function": functionName}).Add(1)
