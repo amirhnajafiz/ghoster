@@ -38,3 +38,7 @@ func (h Handler) ListFunctions(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(bytes)
 }
+
+func (h Handler) Health(w http.ResponseWriter, _ *http.Request) {
+	w.WriteHeader(http.StatusOK)
+}

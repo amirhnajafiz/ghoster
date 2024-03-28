@@ -24,7 +24,8 @@ func main() {
 		Metrics: metrics.Register(cfg.MetricsNamespace, cfg.MetricsSubSystem),
 	}
 
-	router.Methods(http.MethodGet).HandlerFunc(h.ListFunctions)
+	router.HandleFunc("/", h.Health).Methods(http.MethodGet)
+	router.HandleFunc("/list", h.ListFunctions).Methods(http.MethodGet)
 
 	// create a new server
 	srv := &http.Server{
