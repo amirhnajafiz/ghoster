@@ -4,9 +4,13 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+
+	"github.com/amirhnajafiz/ghoster/internal/metrics"
 )
 
-type Handler struct{}
+type Handler struct {
+	Metrics metrics.Metrics
+}
 
 const functionsDir = "functions"
 
@@ -28,6 +32,8 @@ func (h Handler) ListFunctions(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
+
+	h.Metrics.ListRequests.Add(1)
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(bytes)
