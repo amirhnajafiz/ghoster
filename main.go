@@ -12,6 +12,14 @@ import (
 	"github.com/gorilla/mux"
 )
 
+func loggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println(r.RequestURI)
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	// load env variables
 	cfg := config.Load()
@@ -25,6 +33,8 @@ func main() {
 	}
 
 	router.HandleFunc("/", h.Health).Methods(http.MethodGet)
+
+	router.Use(loggingMiddleware)
 	router.HandleFunc("/list", h.ListFunctions).Methods(http.MethodGet)
 
 	// create a new server
@@ -35,6 +45,8 @@ func main() {
 
 	// register metrics server
 	metrics.NewServer(cfg.MetricsPort)
+
+	log.Printf("ghoster server started on %d ...\n", cfg.HTTPPort)
 
 	// start the http server
 	if err := srv.ListenAndServe(); err != nil {
