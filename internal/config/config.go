@@ -1,5 +1,7 @@
 package config
 
+import "github.com/joho/godotenv"
+
 type Config struct {
 	HTTPPort         int
 	MetricsPort      int
@@ -8,6 +10,8 @@ type Config struct {
 }
 
 func Load() Config {
+	godotenv.Load()
+
 	return Config{
 		HTTPPort:         readIntFromEnv("HTTP_PORT"),
 		MetricsPort:      readIntFromEnv("METRICS_PORT"),
