@@ -14,7 +14,9 @@ import (
 
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println(r.RequestURI)
+		if r.RequestURI != "/healthz" {
+			log.Println(r.RequestURI)
+		}
 
 		next.ServeHTTP(w, r)
 	})
@@ -32,9 +34,9 @@ func main() {
 		Metrics: metrics.Register(cfg.MetricsNamespace, cfg.MetricsSubSystem),
 	}
 
-	router.HandleFunc("/", h.Health).Methods(http.MethodGet)
-
 	router.Use(loggingMiddleware)
+
+	router.HandleFunc("/healthz", h.Health).Methods(http.MethodGet)
 	router.HandleFunc("/list", h.ListFunctions).Methods(http.MethodGet)
 
 	// create a new server
