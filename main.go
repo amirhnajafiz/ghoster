@@ -28,6 +28,7 @@ func main() {
 	}
 
 	router.Use(middleware.Logging)
+	router.Use(middleware.Metrics(h.Metrics))
 
 	router.HandleFunc("/healthz", h.Health).Methods(http.MethodGet)
 	router.HandleFunc("/functions", h.ListFunctions).Methods(http.MethodGet)
