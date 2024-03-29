@@ -1,6 +1,8 @@
 package worker
 
 import (
+	"context"
+
 	"golang.org/x/sync/semaphore"
 )
 
@@ -14,4 +16,14 @@ func NewPool(limit int) Pool {
 	instance.Semaphore = semaphore.NewWeighted(int64(limit))
 
 	return instance
+}
+
+func (p Pool) Pull() {
+	ctx := context.Background()
+
+	p.Semaphore.Acquire(ctx, 1)
+}
+
+func (p Pool) Free() {
+	p.Semaphore.Release(1)
 }
