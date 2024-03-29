@@ -18,7 +18,7 @@ func Register(namespace, subsystem string) Metrics {
 			Help:      "getting total number of requests per endpoint",
 			Namespace: namespace,
 			Subsystem: subsystem,
-		}, []string{"endpoint"}),
+		}, []string{"endpoint", "method"}),
 		ExecuteRequests: *promauto.NewCounterVec(prometheus.CounterOpts{
 			Name:      "total_function_calls",
 			Help:      "getting total number of function calls",
