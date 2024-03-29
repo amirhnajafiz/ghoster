@@ -7,21 +7,12 @@ import (
 
 	"github.com/amirhnajafiz/ghoster/internal/config"
 	internalHttp "github.com/amirhnajafiz/ghoster/internal/http"
+	"github.com/amirhnajafiz/ghoster/internal/http/middleware"
 	"github.com/amirhnajafiz/ghoster/internal/metrics"
 	"github.com/amirhnajafiz/ghoster/internal/worker"
 
 	"github.com/gorilla/mux"
 )
-
-func loggingMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.RequestURI != "/healthz" {
-			log.Println(r.RequestURI)
-		}
-
-		next.ServeHTTP(w, r)
-	})
-}
 
 func main() {
 	// load env variables
@@ -36,7 +27,7 @@ func main() {
 		Pool:    worker.NewPool(cfg.PoolSize),
 	}
 
-	router.Use(loggingMiddleware)
+	router.Use(middleware.Logging)
 
 	router.HandleFunc("/healthz", h.Health).Methods(http.MethodGet)
 	router.HandleFunc("/list", h.ListFunctions).Methods(http.MethodGet)
