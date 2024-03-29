@@ -31,6 +31,7 @@ func main() {
 
 	router.HandleFunc("/healthz", h.Health).Methods(http.MethodGet)
 	router.HandleFunc("/functions", h.ListFunctions).Methods(http.MethodGet)
+	router.HandleFunc("/functions/{function}", h.GetFunctionMarkdown).Methods(http.MethodGet)
 	router.HandleFunc("/functions/{function}", h.ExecuteFunction).Methods(http.MethodPost)
 
 	// create a new server

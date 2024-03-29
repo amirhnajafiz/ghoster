@@ -19,7 +19,10 @@ type Handler struct {
 	Pool    worker.Pool
 }
 
-const functionsDir = "functions"
+const (
+	functionsDir    = "functions"
+	descriptionFile = "README.md"
+)
 
 func (h Handler) ListFunctions(w http.ResponseWriter, r *http.Request) {
 	functions, err := listDirectoryItems(functionsDir)
@@ -44,6 +47,14 @@ func (h Handler) ListFunctions(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(bytes)
+}
+
+func (h Handler) GetFunctionMarkdown(w http.ResponseWriter, r *http.Request) {
+	// get param variables
+	vars := mux.Vars(r)
+	functionName := vars["function"]
+
+	http.ServeFile(w, r, fmt.Sprintf("%s/%s/%s", functionsDir, functionName, descriptionFile))
 }
 
 func (h Handler) ExecuteFunction(w http.ResponseWriter, r *http.Request) {
