@@ -43,8 +43,6 @@ func (h Handler) ListFunctions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.Metrics.ListRequests.Add(1)
-
 	w.WriteHeader(http.StatusOK)
 	w.Write(bytes)
 }

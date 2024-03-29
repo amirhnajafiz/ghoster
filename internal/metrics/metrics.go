@@ -6,19 +6,19 @@ import (
 )
 
 type Metrics struct {
-	ListRequests    prometheus.Counter
+	Requests        prometheus.CounterVec
 	ExecuteRequests prometheus.CounterVec
 	FunctionFailure prometheus.CounterVec
 }
 
 func Register(namespace, subsystem string) Metrics {
 	return Metrics{
-		ListRequests: promauto.NewCounter(prometheus.CounterOpts{
-			Name:      "total_list_requests",
-			Help:      "getting total number of list requests",
+		Requests: *promauto.NewCounterVec(prometheus.CounterOpts{
+			Name:      "total_requests",
+			Help:      "getting total number of requests per endpoint",
 			Namespace: namespace,
 			Subsystem: subsystem,
-		}),
+		}, []string{"endpoint"}),
 		ExecuteRequests: *promauto.NewCounterVec(prometheus.CounterOpts{
 			Name:      "total_function_calls",
 			Help:      "getting total number of function calls",
