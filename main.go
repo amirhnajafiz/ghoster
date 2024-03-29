@@ -8,6 +8,7 @@ import (
 	"github.com/amirhnajafiz/ghoster/internal/config"
 	internalHttp "github.com/amirhnajafiz/ghoster/internal/http"
 	"github.com/amirhnajafiz/ghoster/internal/metrics"
+	"github.com/amirhnajafiz/ghoster/internal/worker"
 
 	"github.com/gorilla/mux"
 )
@@ -32,6 +33,7 @@ func main() {
 	// create an instance of internal handler
 	h := internalHttp.Handler{
 		Metrics: metrics.Register(cfg.MetricsNamespace, cfg.MetricsSubSystem),
+		Pool:    worker.NewPool(cfg.PoolSize),
 	}
 
 	router.Use(loggingMiddleware)
