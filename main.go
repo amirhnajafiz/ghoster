@@ -30,8 +30,8 @@ func main() {
 	router.Use(middleware.Logging)
 
 	router.HandleFunc("/healthz", h.Health).Methods(http.MethodGet)
-	router.HandleFunc("/list", h.ListFunctions).Methods(http.MethodGet)
-	router.HandleFunc("/function/{function}", h.ExecuteFunction).Methods(http.MethodPost)
+	router.HandleFunc("/functions", h.ListFunctions).Methods(http.MethodGet)
+	router.HandleFunc("/functions/{function}", h.ExecuteFunction).Methods(http.MethodPost)
 
 	// create a new server
 	srv := &http.Server{
