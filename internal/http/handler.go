@@ -8,6 +8,7 @@ import (
 	"os/exec"
 
 	"github.com/amirhnajafiz/ghoster/internal/metrics"
+	"github.com/amirhnajafiz/ghoster/internal/worker"
 	"github.com/prometheus/client_golang/prometheus"
 
 	"github.com/gorilla/mux"
@@ -15,6 +16,7 @@ import (
 
 type Handler struct {
 	Metrics metrics.Metrics
+	Pool    worker.Pool
 }
 
 const functionsDir = "functions"
@@ -63,6 +65,10 @@ func (h Handler) ExecuteFunction(w http.ResponseWriter, r *http.Request) {
 
 	args := []string{"run", "main.go"}
 	args = append(args, req.Args...)
+
+	// get a resource to continue
+	h.Pool.Pull()
+	defer h.Pool.Free()
 
 	// function execute command
 	cmd := exec.Command("go", args...)
