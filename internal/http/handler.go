@@ -51,14 +51,28 @@ func (h Handler) GetFunctionMarkdown(w http.ResponseWriter, r *http.Request) {
 	// get param variables
 	vars := mux.Vars(r)
 	functionName := vars["function"]
+	path := fmt.Sprintf("%s/%s/%s", functionsDir, functionName, descriptionFile)
 
-	http.ServeFile(w, r, fmt.Sprintf("%s/%s/%s", functionsDir, functionName, descriptionFile))
+	if flag, err := fileOrDirExists(path); err != nil || !flag {
+		w.WriteHeader(http.StatusNotFound)
+
+		return
+	}
+
+	http.ServeFile(w, r, path)
 }
 
 func (h Handler) ExecuteFunction(w http.ResponseWriter, r *http.Request) {
 	// get param variables
 	vars := mux.Vars(r)
 	functionName := vars["function"]
+	path := fmt.Sprintf("%s/%s", functionsDir, functionName)
+
+	if flag, err := fileOrDirExists(path); err != nil || !flag {
+		w.WriteHeader(http.StatusNotFound)
+
+		return
+	}
 
 	// parse json body
 	decoder := json.NewDecoder(r.Body)
