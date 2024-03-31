@@ -12,6 +12,7 @@ func NewServer(port int) {
 	go func() {
 		router := mux.NewRouter()
 
+		router.HandleFunc("/healthz", health).Methods(http.MethodGet)
 		router.HandleFunc("/files", handleUploads).Methods(http.MethodPost)
 
 		srv := &http.Server{
