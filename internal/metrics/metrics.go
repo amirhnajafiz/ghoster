@@ -7,7 +7,7 @@ import (
 
 type Metrics struct {
 	Requests        prometheus.CounterVec
-	ExecuteRequests prometheus.CounterVec
+	FunctionCount   prometheus.CounterVec
 	FunctionFailure prometheus.CounterVec
 }
 
@@ -19,7 +19,7 @@ func Register(namespace, subsystem string) Metrics {
 			Namespace: namespace,
 			Subsystem: subsystem,
 		}, []string{"endpoint", "method"}),
-		ExecuteRequests: *promauto.NewCounterVec(prometheus.CounterOpts{
+		FunctionCount: *promauto.NewCounterVec(prometheus.CounterOpts{
 			Name:      "total_function_calls",
 			Help:      "getting total number of function calls",
 			Namespace: namespace,

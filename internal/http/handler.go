@@ -97,7 +97,7 @@ func (h Handler) ExecuteFunction(w http.ResponseWriter, r *http.Request) {
 	cmd := exec.Command("go", args...)
 	cmd.Dir = fmt.Sprintf("%s/%s", functionsDir, functionName)
 
-	h.Metrics.ExecuteRequests.With(prometheus.Labels{"function": functionName}).Add(1)
+	h.Metrics.FunctionCount.With(prometheus.Labels{"function": functionName}).Add(1)
 
 	// get the command output
 	bytes, err := cmd.Output()
@@ -106,7 +106,7 @@ func (h Handler) ExecuteFunction(w http.ResponseWriter, r *http.Request) {
 
 		log.Println(err)
 
-		h.Metrics.ExecuteRequests.With(prometheus.Labels{"function": functionName}).Add(1)
+		h.Metrics.FunctionFailure.With(prometheus.Labels{"function": functionName}).Add(1)
 
 		return
 	}
