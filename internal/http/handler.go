@@ -114,7 +114,7 @@ func (h Handler) ExecuteFunction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.Metrics.FunctionResponseTime.With(prometheus.Labels{"function": functionName}).Set(float64(time.Since(now).Milliseconds()))
+	h.Metrics.FunctionResponseTime.With(prometheus.Labels{"function": functionName}).Set(float64(time.Since(now) / 1000000))
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(bytes)

@@ -32,7 +32,7 @@ func Register(namespace, subsystem string) Metrics {
 			Namespace: namespace,
 			Subsystem: subsystem,
 		}, []string{"function"}),
-		FunctionResponseTime: *prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		FunctionResponseTime: *promauto.NewGaugeVec(prometheus.GaugeOpts{
 			Name:      "function_response_time",
 			Help:      "response time of functions",
 			Namespace: namespace,
