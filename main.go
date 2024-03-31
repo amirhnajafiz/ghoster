@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/amirhnajafiz/ghoster/internal/config"
+	"github.com/amirhnajafiz/ghoster/internal/file"
 	internalHttp "github.com/amirhnajafiz/ghoster/internal/http"
 	"github.com/amirhnajafiz/ghoster/internal/http/middleware"
 	"github.com/amirhnajafiz/ghoster/internal/metrics"
@@ -40,6 +41,9 @@ func main() {
 		Handler: router,
 		Addr:    fmt.Sprintf("127.0.0.1:%d", cfg.HTTPPort),
 	}
+
+	// register file server
+	file.NewServer(cfg.FileServerPort)
 
 	// register metrics server
 	metrics.NewServer(cfg.MetricsPort)
