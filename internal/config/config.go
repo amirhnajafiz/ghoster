@@ -10,6 +10,7 @@ type Config struct {
 	PoolSize         int
 }
 
+// Load env variables to a Config instance
 func Load() Config {
 	godotenv.Load()
 

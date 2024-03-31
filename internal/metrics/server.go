@@ -7,6 +7,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
+// NewServer creates a new metrics server.
 func NewServer(port int) {
 	go func() {
 		http.Handle("/metrics", promhttp.Handler())

@@ -10,6 +10,8 @@ type Pool struct {
 	Semaphore *semaphore.Weighted
 }
 
+// NewPool returns a pool instance with its internal semaphore
+// that manages the number of concurrent workers in used by ghoster.
 func NewPool(limit int) Pool {
 	instance := Pool{}
 

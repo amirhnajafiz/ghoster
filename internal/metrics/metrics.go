@@ -12,6 +12,7 @@ type Metrics struct {
 	FunctionResponseTime prometheus.GaugeVec
 }
 
+// Register metrics, creates prometheus metrics for ghoster.
 func Register(namespace, subsystem string) Metrics {
 	return Metrics{
 		Requests: *promauto.NewCounterVec(prometheus.CounterOpts{
