@@ -10,7 +10,6 @@ import (
 
 	"github.com/amirhnajafiz/ghoster/internal/metrics"
 	"github.com/amirhnajafiz/ghoster/internal/worker"
-	"github.com/prometheus/client_golang/prometheus"
 
 	"github.com/gorilla/mux"
 )
@@ -98,7 +97,7 @@ func (h Handler) ExecuteFunction(w http.ResponseWriter, r *http.Request) {
 	cmd := exec.Command("go", args...)
 	cmd.Dir = fmt.Sprintf("%s/%s", functionsDir, functionName)
 
-	h.Metrics.FunctionCount.With(prometheus.Labels{"function": functionName}).Add(1)
+	h.Metrics.AddFunctionCount(functionName, false)
 
 	now := time.Now()
 
@@ -109,12 +108,12 @@ func (h Handler) ExecuteFunction(w http.ResponseWriter, r *http.Request) {
 
 		log.Println(err)
 
-		h.Metrics.FunctionFailure.With(prometheus.Labels{"function": functionName}).Add(1)
+		h.Metrics.AddFunctionCount(functionName, true)
 
 		return
 	}
 
-	h.Metrics.FunctionResponseTime.With(prometheus.Labels{"function": functionName}).Set(float64(time.Since(now) / 1000000))
+	h.Metrics.AddFunctionResponseTime(functionName, now)
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(bytes)
