@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os/exec"
+	"time"
 
 	"github.com/amirhnajafiz/ghoster/internal/metrics"
 	"github.com/amirhnajafiz/ghoster/internal/worker"
@@ -99,6 +100,8 @@ func (h Handler) ExecuteFunction(w http.ResponseWriter, r *http.Request) {
 
 	h.Metrics.FunctionCount.With(prometheus.Labels{"function": functionName}).Add(1)
 
+	now := time.Now()
+
 	// get the command output
 	bytes, err := cmd.Output()
 	if err != nil {
@@ -110,6 +113,8 @@ func (h Handler) ExecuteFunction(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
+
+	h.Metrics.FunctionResponseTime.With(prometheus.Labels{"function": functionName}).Set(float64(time.Since(now).Milliseconds()))
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(bytes)
