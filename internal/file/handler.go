@@ -16,6 +16,7 @@ func handleUploads(w http.ResponseWriter, r *http.Request) {
 	uid := uuid.NewString()
 	path := fmt.Sprintf("%s/%s", functionsDir, uid)
 	fileName := r.FormValue("file_name")
+	newPath := fmt.Sprintf("%s/%s", functionsDir, fileName)
 
 	file, _, err := r.FormFile("file")
 	if err != nil {
@@ -46,7 +47,15 @@ func handleUploads(w http.ResponseWriter, r *http.Request) {
 	file.Close()
 	f.Close()
 
-	if err := unzip(path, fmt.Sprintf("%s/%s", functionsDir, fileName)); err != nil {
+	if err := os.Mkdir(newPath, 0666); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+
+		log.Println(err)
+
+		return
+	}
+
+	if err := unzip(path, newPath); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 
 		log.Println(err)
