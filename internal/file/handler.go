@@ -72,6 +72,8 @@ func handleUploads(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Printf("file-server [%s] %s\n", r.Method, r.RequestURI)
+
 	w.WriteHeader(http.StatusOK)
 }
 
