@@ -6,9 +6,10 @@ import (
 )
 
 type Metrics struct {
-	Requests        prometheus.CounterVec
-	FunctionCount   prometheus.CounterVec
-	FunctionFailure prometheus.CounterVec
+	Requests             prometheus.CounterVec
+	FunctionCount        prometheus.CounterVec
+	FunctionFailure      prometheus.CounterVec
+	FunctionResponseTime prometheus.GaugeVec
 }
 
 func Register(namespace, subsystem string) Metrics {
@@ -28,6 +29,12 @@ func Register(namespace, subsystem string) Metrics {
 		FunctionFailure: *promauto.NewCounterVec(prometheus.CounterOpts{
 			Name:      "total_function_failuers",
 			Help:      "getting total number of function failure calls",
+			Namespace: namespace,
+			Subsystem: subsystem,
+		}, []string{"function"}),
+		FunctionResponseTime: *prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name:      "function_response_time",
+			Help:      "response time of functions",
 			Namespace: namespace,
 			Subsystem: subsystem,
 		}, []string{"function"}),
