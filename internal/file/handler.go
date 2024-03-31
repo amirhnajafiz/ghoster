@@ -1,6 +1,7 @@
 package file
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -27,7 +28,7 @@ func handleUploads(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0666)
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 
@@ -47,7 +48,7 @@ func handleUploads(w http.ResponseWriter, r *http.Request) {
 	file.Close()
 	f.Close()
 
-	if err := os.Mkdir(newPath, 0666); err != nil {
+	if err := os.Mkdir(newPath, 0777); err != nil && !errors.Is(err, os.ErrExist) {
 		w.WriteHeader(http.StatusInternalServerError)
 
 		log.Println(err)

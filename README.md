@@ -2,6 +2,13 @@
 
 Simple serverless system for executing *Golang* applications, aka **Ghoster**. This system is a **FaaS**(Function as a Service). As the name suggests, it executes Golang projects on demand.
 
+```sh
+curl -i -X POST \
+  -F "file_name=subtraction" \
+  -F "file=@Archive.zip" \
+  localhost:5002/files
+```
+
 ## Components
 
 Ghoster consists of three major components as descripted below:
