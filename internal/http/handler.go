@@ -1,7 +1,6 @@
 package http
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -9,14 +8,13 @@ import (
 
 	"github.com/amirhnajafiz/ghoster/internal/cexe"
 	"github.com/amirhnajafiz/ghoster/internal/metrics"
-	"golang.org/x/sync/semaphore"
 
 	"github.com/gorilla/mux"
 )
 
 type Handler struct {
 	Metrics         metrics.Metrics
-	Semaphore       *semaphore.Weighted
+	CExe            *cexe.CExe
 	FunctionsDir    string
 	DescriptionFile string
 }
@@ -75,18 +73,11 @@ func (h Handler) ExecuteFunction(w http.ResponseWriter, r *http.Request) {
 	args := []string{"run", "main.go"}
 	args = append(args, req.Args...)
 
-	// get a resource to continue
-	ctx := context.Background()
-	h.Semaphore.Acquire(ctx, 1)
-	defer func() {
-		h.Semaphore.Release(1)
-	}()
-
 	h.Metrics.AddFunctionCount(functionName, false)
 
 	// function execute command and
 	// get the command output
-	bytes, duration, err := cexe.Execute(path, args)
+	bytes, duration, err := h.CExe.Execute(path, args)
 	if err != nil {
 		h.Metrics.AddFunctionCount(functionName, true)
 		h.error(w, http.StatusBadGateway, err)

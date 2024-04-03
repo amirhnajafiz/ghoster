@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/amirhnajafiz/ghoster/internal/cexe"
 	"github.com/amirhnajafiz/ghoster/internal/config"
 	"github.com/amirhnajafiz/ghoster/internal/file"
 	"github.com/amirhnajafiz/ghoster/internal/gc"
@@ -13,7 +14,6 @@ import (
 	"github.com/amirhnajafiz/ghoster/internal/metrics"
 
 	"github.com/gorilla/mux"
-	"golang.org/x/sync/semaphore"
 )
 
 const (
@@ -32,7 +32,7 @@ func main() {
 	// create an instance of internal handler
 	h := internalHttp.Handler{
 		Metrics:         metrics.Register(cfg.MetricsNamespace, cfg.MetricsSubSystem),
-		Semaphore:       semaphore.NewWeighted(int64(cfg.PoolSize)),
+		CExe:            cexe.New(cfg.PoolSize),
 		FunctionsDir:    functionsDir,
 		DescriptionFile: descriptionFileName,
 	}

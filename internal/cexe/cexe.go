@@ -1,12 +1,32 @@
 package cexe
 
 import (
+	"context"
 	"fmt"
 	"os/exec"
 	"time"
+
+	"golang.org/x/sync/semaphore"
 )
 
-func Execute(path string, args []string) ([]byte, time.Duration, error) {
+type CExe struct {
+	semaphore *semaphore.Weighted
+}
+
+func New(pool int) *CExe {
+	return &CExe{
+		semaphore: semaphore.NewWeighted(int64(pool)),
+	}
+}
+
+func (c *CExe) Execute(path string, args []string) ([]byte, time.Duration, error) {
+	// get a resource to continue
+	ctx := context.Background()
+	c.semaphore.Acquire(ctx, 1)
+	defer func() {
+		c.semaphore.Release(1)
+	}()
+
 	cmd := exec.Command("go", args...)
 	cmd.Dir = path
 
