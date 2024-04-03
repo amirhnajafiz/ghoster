@@ -7,13 +7,13 @@ import (
 
 	"github.com/amirhnajafiz/ghoster/internal/config"
 	"github.com/amirhnajafiz/ghoster/internal/file"
+	"github.com/amirhnajafiz/ghoster/internal/gc"
 	internalHttp "github.com/amirhnajafiz/ghoster/internal/http"
 	"github.com/amirhnajafiz/ghoster/internal/http/middleware"
 	"github.com/amirhnajafiz/ghoster/internal/metrics"
-	"github.com/amirhnajafiz/ghoster/internal/worker"
-	"github.com/amirhnajafiz/ghoster/internal/worker/gc"
 
 	"github.com/gorilla/mux"
+	"golang.org/x/sync/semaphore"
 )
 
 const (
@@ -32,7 +32,7 @@ func main() {
 	// create an instance of internal handler
 	h := internalHttp.Handler{
 		Metrics:         metrics.Register(cfg.MetricsNamespace, cfg.MetricsSubSystem),
-		Pool:            worker.NewPool(cfg.PoolSize),
+		Semaphore:       semaphore.NewWeighted(int64(cfg.PoolSize)),
 		FunctionsDir:    functionsDir,
 		DescriptionFile: descriptionFileName,
 	}

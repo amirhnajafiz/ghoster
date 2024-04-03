@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -9,14 +10,14 @@ import (
 	"time"
 
 	"github.com/amirhnajafiz/ghoster/internal/metrics"
-	"github.com/amirhnajafiz/ghoster/internal/worker"
+	"golang.org/x/sync/semaphore"
 
 	"github.com/gorilla/mux"
 )
 
 type Handler struct {
 	Metrics         metrics.Metrics
-	Pool            worker.Pool
+	Semaphore       *semaphore.Weighted
 	FunctionsDir    string
 	DescriptionFile string
 }
@@ -76,8 +77,11 @@ func (h Handler) ExecuteFunction(w http.ResponseWriter, r *http.Request) {
 	args = append(args, req.Args...)
 
 	// get a resource to continue
-	h.Pool.Pull()
-	defer h.Pool.Free()
+	ctx := context.Background()
+	h.Semaphore.Acquire(ctx, 1)
+	defer func() {
+		h.Semaphore.Release(1)
+	}()
 
 	// function execute command
 	cmd := exec.Command("go", args...)
