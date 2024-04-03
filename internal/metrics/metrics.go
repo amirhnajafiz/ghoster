@@ -26,8 +26,8 @@ func (m *Metrics) AddFunctionCount(functionName string, failed bool) {
 	}
 }
 
-func (m *Metrics) AddFunctionResponseTime(functionName string, since time.Time) {
-	m.functionResponseTime.With(prometheus.Labels{"function": functionName}).Set(float64(time.Since(since) / 1000000))
+func (m *Metrics) AddFunctionResponseTime(functionName string, since time.Duration) {
+	m.functionResponseTime.With(prometheus.Labels{"function": functionName}).Set(float64((since / 1000000)))
 }
 
 // Register metrics, creates prometheus metrics for ghoster.

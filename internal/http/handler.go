@@ -6,9 +6,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os/exec"
-	"time"
 
+	"github.com/amirhnajafiz/ghoster/internal/cexe"
 	"github.com/amirhnajafiz/ghoster/internal/metrics"
 	"golang.org/x/sync/semaphore"
 
@@ -83,23 +82,18 @@ func (h Handler) ExecuteFunction(w http.ResponseWriter, r *http.Request) {
 		h.Semaphore.Release(1)
 	}()
 
-	// function execute command
-	cmd := exec.Command("go", args...)
-	cmd.Dir = fmt.Sprintf("%s/%s", h.FunctionsDir, functionName)
-
 	h.Metrics.AddFunctionCount(functionName, false)
 
-	now := time.Now()
-
+	// function execute command and
 	// get the command output
-	bytes, err := cmd.Output()
+	bytes, duration, err := cexe.Execute(path, args)
 	if err != nil {
 		h.Metrics.AddFunctionCount(functionName, true)
 		h.error(w, http.StatusBadGateway, err)
 		return
 	}
 
-	h.Metrics.AddFunctionResponseTime(functionName, now)
+	h.Metrics.AddFunctionResponseTime(functionName, duration)
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(bytes)
