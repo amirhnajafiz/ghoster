@@ -12,7 +12,7 @@ type Metrics struct {
 	functionCount        prometheus.CounterVec
 	functionFailure      prometheus.CounterVec
 	functionResponseTime prometheus.GaugeVec
-	busyWorkers          prometheus.Gauge
+	pendingWorkers       prometheus.Gauge
 }
 
 func (m *Metrics) AddRequest(endpoint, method string) {
@@ -20,11 +20,11 @@ func (m *Metrics) AddRequest(endpoint, method string) {
 }
 
 func (m *Metrics) AddWorker() {
-	m.busyWorkers.Add(1)
+	m.pendingWorkers.Add(1)
 }
 
 func (m *Metrics) RemoveWorker() {
-	m.busyWorkers.Sub(1)
+	m.pendingWorkers.Sub(1)
 }
 
 func (m *Metrics) AddFunctionCount(functionName string, failed bool) {
@@ -66,9 +66,9 @@ func Register(namespace, subsystem string) Metrics {
 			Namespace: namespace,
 			Subsystem: subsystem,
 		}, []string{"function"}),
-		busyWorkers: promauto.NewGauge(prometheus.GaugeOpts{
-			Name:      "busy_workers",
-			Help:      "current number of busy workers",
+		pendingWorkers: promauto.NewGauge(prometheus.GaugeOpts{
+			Name:      "pending_workers",
+			Help:      "current number of pend workers",
 			Namespace: namespace,
 			Subsystem: subsystem,
 		}),

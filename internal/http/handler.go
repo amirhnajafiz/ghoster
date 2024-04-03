@@ -74,6 +74,8 @@ func (h Handler) ExecuteFunction(w http.ResponseWriter, r *http.Request) {
 	args = append(args, req.Args...)
 
 	h.Metrics.AddFunctionCount(functionName, false)
+	h.Metrics.AddWorker()
+	defer h.Metrics.RemoveWorker()
 
 	// function execute command and
 	// get the command output
