@@ -11,13 +11,16 @@ import (
 	"github.com/google/uuid"
 )
 
-const functionsDir = "functions"
+const (
+	functionsDir = "functions"
+	prefixToken  = "xxx-"
+)
 
 func handleUploads(w http.ResponseWriter, r *http.Request) {
 	uid := uuid.NewString()
 	path := fmt.Sprintf("%s/%s", functionsDir, uid)
 	fileName := r.FormValue("file_name")
-	newPath := fmt.Sprintf("%s/%s", functionsDir, fileName)
+	newPath := fmt.Sprintf("%s/%s%s", functionsDir, prefixToken, fileName)
 
 	file, _, err := r.FormFile("file")
 	if err != nil {
