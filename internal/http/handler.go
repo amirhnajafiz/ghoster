@@ -24,19 +24,13 @@ type Handler struct {
 func (h Handler) ListFunctions(w http.ResponseWriter, r *http.Request) {
 	functions, err := listDirectoryItems(h.FunctionsDir)
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-
-		log.Println(err)
-
+		h.error(w, http.StatusBadRequest, err)
 		return
 	}
 
 	bytes, err := json.Marshal(functions)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-
-		log.Println(err)
-
+		h.error(w, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -51,8 +45,7 @@ func (h Handler) GetFunctionMarkdown(w http.ResponseWriter, r *http.Request) {
 	path := fmt.Sprintf("%s/%s/%s", h.FunctionsDir, functionName, h.DescriptionFile)
 
 	if flag, err := fileOrDirExists(path); err != nil || !flag {
-		w.WriteHeader(http.StatusNotFound)
-
+		h.error(w, http.StatusNotFound, nil)
 		return
 	}
 
@@ -66,8 +59,7 @@ func (h Handler) ExecuteFunction(w http.ResponseWriter, r *http.Request) {
 	path := fmt.Sprintf("%s/%s", h.FunctionsDir, functionName)
 
 	if flag, err := fileOrDirExists(path); err != nil || !flag {
-		w.WriteHeader(http.StatusNotFound)
-
+		h.error(w, http.StatusNotFound, nil)
 		return
 	}
 
@@ -76,10 +68,7 @@ func (h Handler) ExecuteFunction(w http.ResponseWriter, r *http.Request) {
 	var req Request
 
 	if err := decoder.Decode(&req); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-
-		log.Println(err)
-
+		h.error(w, http.StatusBadRequest, err)
 		return
 	}
 
@@ -101,12 +90,8 @@ func (h Handler) ExecuteFunction(w http.ResponseWriter, r *http.Request) {
 	// get the command output
 	bytes, err := cmd.Output()
 	if err != nil {
-		w.WriteHeader(http.StatusBadGateway)
-
-		log.Println(err)
-
 		h.Metrics.AddFunctionCount(functionName, true)
-
+		h.error(w, http.StatusBadGateway, err)
 		return
 	}
 
@@ -118,4 +103,12 @@ func (h Handler) ExecuteFunction(w http.ResponseWriter, r *http.Request) {
 
 func (h Handler) Health(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
+}
+
+func (h Handler) error(w http.ResponseWriter, status int, err error) {
+	if err != nil {
+		log.Printf("ghoster handler error: %v\n", err)
+	}
+
+	w.WriteHeader(status)
 }
