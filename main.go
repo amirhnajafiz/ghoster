@@ -53,7 +53,7 @@ func main() {
 
 	// register file server and garbage collector
 	file.NewServer(functionsDir, filesPrefixToken, cfg.FileServerPort)
-	go gc.NewGarbageCollector(functionsDir, filesPrefixToken, cfg.GCInterval)
+	gc.NewGarbageCollector(functionsDir, filesPrefixToken, cfg.GCInterval)
 
 	// register metrics server
 	metrics.NewServer(cfg.MetricsPort)
