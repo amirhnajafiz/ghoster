@@ -9,6 +9,7 @@ import (
 	"golang.org/x/sync/semaphore"
 )
 
+// CExe is a component for executing ghoster projects (aka functions)
 type CExe struct {
 	semaphore *semaphore.Weighted
 }
@@ -27,11 +28,13 @@ func (c *CExe) Execute(path string, args []string) ([]byte, time.Duration, error
 		c.semaphore.Release(1)
 	}()
 
+	// generate function command
 	cmd := exec.Command("go", args...)
 	cmd.Dir = path
 
 	now := time.Now()
 
+	// execute function
 	bytes, err := cmd.Output()
 	if err != nil {
 		return nil, 0, fmt.Errorf("cexe failed to execute project: %v", err)

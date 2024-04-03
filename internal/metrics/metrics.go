@@ -39,7 +39,7 @@ func (m *Metrics) AddFunctionResponseTime(functionName string, since time.Durati
 	m.functionResponseTime.With(prometheus.Labels{"function": functionName}).Set(float64((since / 1000000)))
 }
 
-// Register metrics, creates prometheus metrics for ghoster.
+// Register metrics, creates prometheus metrics for ghoster
 func Register(namespace, subsystem string) Metrics {
 	return Metrics{
 		requests: *promauto.NewCounterVec(prometheus.CounterOpts{

@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -16,13 +17,12 @@ func unzip(src, dest string) error {
 	}
 	defer func() {
 		if err := r.Close(); err != nil {
-			panic(err)
+			log.Println(err)
 		}
 	}()
 
 	os.MkdirAll(dest, 0755)
 
-	// Closure to address file descriptors issue with all the deferred .Close() methods
 	extractAndWriteFile := func(f *zip.File) error {
 		rc, err := f.Open()
 		if err != nil {
@@ -30,13 +30,12 @@ func unzip(src, dest string) error {
 		}
 		defer func() {
 			if err := rc.Close(); err != nil {
-				panic(err)
+				log.Println(err)
 			}
 		}()
 
 		path := filepath.Join(dest, f.Name)
 
-		// Check for ZipSlip (Directory traversal)
 		if !strings.HasPrefix(path, filepath.Clean(dest)+string(os.PathSeparator)) {
 			return fmt.Errorf("illegal file path: %s", path)
 		}
@@ -51,7 +50,7 @@ func unzip(src, dest string) error {
 			}
 			defer func() {
 				if err := f.Close(); err != nil {
-					panic(err)
+					log.Println(err)
 				}
 			}()
 
