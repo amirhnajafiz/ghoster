@@ -9,6 +9,7 @@ type Config struct {
 	MetricsNamespace string
 	MetricsSubSystem string
 	PoolSize         int
+	GCInterval       int
 }
 
 // Load env variables to a Config instance
@@ -22,5 +23,6 @@ func Load() Config {
 		MetricsNamespace: readFromEnv("METRICS_NS"),
 		MetricsSubSystem: readFromEnv("METRICS_SS"),
 		PoolSize:         readIntFromEnv("POOL_SIZE"),
+		GCInterval:       readIntFromEnv("GC_INTERVAL"),
 	}
 }

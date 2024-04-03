@@ -11,6 +11,7 @@ import (
 	"github.com/amirhnajafiz/ghoster/internal/http/middleware"
 	"github.com/amirhnajafiz/ghoster/internal/metrics"
 	"github.com/amirhnajafiz/ghoster/internal/worker"
+	"github.com/amirhnajafiz/ghoster/internal/worker/gc"
 
 	"github.com/gorilla/mux"
 )
@@ -42,8 +43,9 @@ func main() {
 		Addr:    fmt.Sprintf("127.0.0.1:%d", cfg.HTTPPort),
 	}
 
-	// register file server
+	// register file server and garbage collector
 	file.NewServer(cfg.FileServerPort)
+	go gc.NewGarbageCollector(cfg.GCInterval)
 
 	// register metrics server
 	metrics.NewServer(cfg.MetricsPort)
