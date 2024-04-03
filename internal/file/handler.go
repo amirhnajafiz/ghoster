@@ -20,54 +20,36 @@ func handleUploads(functionsDir, prefixToken string) func(http.ResponseWriter, *
 
 		file, _, err := r.FormFile("file")
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-
-			log.Println(err)
-
+			errorHandler(w, http.StatusBadRequest, err)
 			return
 		}
 
 		f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0777)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-
-			log.Println(err)
-
+			errorHandler(w, http.StatusInternalServerError, err)
 			return
 		}
 
 		if _, err := io.Copy(f, file); err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-
-			log.Println(err)
-
+			errorHandler(w, http.StatusInternalServerError, err)
 			return
 		}
 
-		file.Close()
-		f.Close()
+		_ = file.Close()
+		_ = f.Close()
 
 		if err := os.Mkdir(newPath, 0777); err != nil && !errors.Is(err, os.ErrExist) {
-			w.WriteHeader(http.StatusInternalServerError)
-
-			log.Println(err)
-
+			errorHandler(w, http.StatusInternalServerError, err)
 			return
 		}
 
 		if err := unzip(path, newPath); err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-
-			log.Println(err)
-
+			errorHandler(w, http.StatusInternalServerError, err)
 			return
 		}
 
 		if err := os.RemoveAll(path); err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-
-			log.Println(err)
-
+			errorHandler(w, http.StatusInternalServerError, err)
 			return
 		}
 
@@ -79,4 +61,9 @@ func handleUploads(functionsDir, prefixToken string) func(http.ResponseWriter, *
 
 func health(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
+}
+
+func errorHandler(w http.ResponseWriter, status int, err error) {
+	log.Printf("ghoster handler error: %v\n", err)
+	w.WriteHeader(status)
 }
