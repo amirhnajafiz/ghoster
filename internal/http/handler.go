@@ -15,17 +15,14 @@ import (
 )
 
 type Handler struct {
-	Metrics metrics.Metrics
-	Pool    worker.Pool
+	Metrics         metrics.Metrics
+	Pool            worker.Pool
+	FunctionsDir    string
+	DescriptionFile string
 }
 
-const (
-	functionsDir    = "functions"
-	descriptionFile = "README.md"
-)
-
 func (h Handler) ListFunctions(w http.ResponseWriter, r *http.Request) {
-	functions, err := listDirectoryItems(functionsDir)
+	functions, err := listDirectoryItems(h.FunctionsDir)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 
@@ -51,7 +48,7 @@ func (h Handler) GetFunctionMarkdown(w http.ResponseWriter, r *http.Request) {
 	// get param variables
 	vars := mux.Vars(r)
 	functionName := vars["function"]
-	path := fmt.Sprintf("%s/%s/%s", functionsDir, functionName, descriptionFile)
+	path := fmt.Sprintf("%s/%s/%s", h.FunctionsDir, functionName, h.DescriptionFile)
 
 	if flag, err := fileOrDirExists(path); err != nil || !flag {
 		w.WriteHeader(http.StatusNotFound)
@@ -66,7 +63,7 @@ func (h Handler) ExecuteFunction(w http.ResponseWriter, r *http.Request) {
 	// get param variables
 	vars := mux.Vars(r)
 	functionName := vars["function"]
-	path := fmt.Sprintf("%s/%s", functionsDir, functionName)
+	path := fmt.Sprintf("%s/%s", h.FunctionsDir, functionName)
 
 	if flag, err := fileOrDirExists(path); err != nil || !flag {
 		w.WriteHeader(http.StatusNotFound)
@@ -95,7 +92,7 @@ func (h Handler) ExecuteFunction(w http.ResponseWriter, r *http.Request) {
 
 	// function execute command
 	cmd := exec.Command("go", args...)
-	cmd.Dir = fmt.Sprintf("%s/%s", functionsDir, functionName)
+	cmd.Dir = fmt.Sprintf("%s/%s", h.FunctionsDir, functionName)
 
 	h.Metrics.AddFunctionCount(functionName, false)
 

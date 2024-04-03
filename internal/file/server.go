@@ -8,12 +8,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func NewServer(port int) {
+func NewServer(functionsDir, prefixToken string, port int) {
 	go func() {
 		router := mux.NewRouter()
 
 		router.HandleFunc("/healthz", health).Methods(http.MethodGet)
-		router.HandleFunc("/files", handleUploads).Methods(http.MethodPost)
+		router.HandleFunc("/files", handleUploads(functionsDir, prefixToken)).Methods(http.MethodPost)
 
 		srv := &http.Server{
 			Handler: router,

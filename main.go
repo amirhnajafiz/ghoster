@@ -16,6 +16,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const (
+	functionsDir        = "functions"
+	filesPrefixToken    = "xxx-"
+	descriptionFileName = "README.md"
+)
+
 func main() {
 	// load env variables
 	cfg := config.Load()
@@ -25,8 +31,10 @@ func main() {
 
 	// create an instance of internal handler
 	h := internalHttp.Handler{
-		Metrics: metrics.Register(cfg.MetricsNamespace, cfg.MetricsSubSystem),
-		Pool:    worker.NewPool(cfg.PoolSize),
+		Metrics:         metrics.Register(cfg.MetricsNamespace, cfg.MetricsSubSystem),
+		Pool:            worker.NewPool(cfg.PoolSize),
+		FunctionsDir:    functionsDir,
+		DescriptionFile: descriptionFileName,
 	}
 
 	router.Use(middleware.Logging)
@@ -44,8 +52,8 @@ func main() {
 	}
 
 	// register file server and garbage collector
-	file.NewServer(cfg.FileServerPort)
-	go gc.NewGarbageCollector(cfg.GCInterval)
+	file.NewServer(functionsDir, filesPrefixToken, cfg.FileServerPort)
+	go gc.NewGarbageCollector(functionsDir, filesPrefixToken, cfg.GCInterval)
 
 	// register metrics server
 	metrics.NewServer(cfg.MetricsPort)

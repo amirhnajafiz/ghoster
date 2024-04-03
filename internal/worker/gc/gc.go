@@ -5,12 +5,7 @@ import (
 	"time"
 )
 
-const (
-	functionsDir = "functions"
-	prefixToken  = "xxx-"
-)
-
-func NewGarbageCollector(interval int) {
+func NewGarbageCollector(functionsDir, prefixToken string, interval int) {
 	tk := time.NewTicker(time.Duration(interval) * time.Second)
 
 	for {
