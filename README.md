@@ -1,6 +1,20 @@
 # :ghost: Ghoster
 
-Simple serverless system for executing *Golang* applications, aka **Ghoster**. This system is a **FaaS**(Function as a Service). As the name suggests, it executes Golang projects on demand.
+Implementing a simple serverless system for executing *Golang* applications, aka **Ghoster**. This system is a **FaaS**(Function as a Service). As the name suggests, it executes Golang projects on demand. Ghoster is a minimal version of serverless applications.
+
+## Run using Docker
+
+In order to execute Ghoster, you need to set some environment variables, mount the functions directory, and build a docker image.
+
+### env variables
+
+### functions dir mount
+
+### docker command
+
+## Interface
+
+Ghoster uses **HTTP** requests for registring projects, listing projects, and executing them.
 
 ```sh
 curl -i -X POST \
@@ -9,15 +23,8 @@ curl -i -X POST \
   localhost:5002/files
 ```
 
-## Components
+## Metrics
 
-Ghoster consists of three major components as descripted below:
+## Suggestions
 
-1. file manager: handles the Golang projects
-   1. upload
-   2. index
-   3. list
-   4. delete
-2. core: is a gateway for running projects
-   1. execute
-3. metrics server: manages the app metrics (metrics exporter)
+## Contribute
