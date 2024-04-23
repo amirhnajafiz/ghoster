@@ -44,8 +44,8 @@ When you want to upload a new function, make sure to use file server and upload 
 In order to build and run Ghoster using docker, you can use the two following commands:
 
 ```sh
-docker build . -f build/Dockerfile ghoster:latest
-docker run -d -it -e HTTP_PORT=8080 -p 8080:8080 -v $(pwd)/functions:/var/ghoster/functions ghoster:latest
+docker pull ghcr.io/amirhnajafiz/ghoster:latest
+docker run -d -it -e HTTP_PORT=8080 -p 8080:8080 -v $(pwd)/functions:/var/ghoster/functions ghcr.io/amirhnajafiz/ghoster:latest
 ```
 
 ## Interface
